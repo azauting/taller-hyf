@@ -1,0 +1,189 @@
+{% extends 'menu/sidebar.html' %}
+{% block title %}Crear Ticket Repuesto | HYF{% endblock %}
+{% block header %}Crear Ticket para Repuesto{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 font-sans">
+    <!-- Encabezado con fondo oscuro -->
+    <div class="bg-hyf-primary text-white p-6">
+        <h1 class="text-2xl font-bold">Nuevo Ticket de Repuesto</h1>
+    </div>
+
+    <!-- Contenido principal -->
+    <form action="{{ url_for('ticket_repuesto.ticket_repuesto_crear') }}" method="POST" class="p-6 space-y-8">
+        <!-- Información básica en cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Card Cliente -->
+            <div class="bg-hyf-light p-5 rounded-lg border border-gray-200">
+                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <i class="fas fa-user text-hyf-accent"></i> Cliente
+                </h3>
+
+                <!-- Buscador de clientes -->
+                <div class="relative">
+                    <input type="text" id="buscador-cliente"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition mb-3"
+                        placeholder="Buscar cliente por nombre o apellido..." autocomplete="off">
+
+                    <!-- Resultados del buscador -->
+                    <div id="resultados-cliente"
+                        class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                        <!-- Los resultados se cargarán aquí via JavaScript -->
+                    </div>
+
+                    <input type="hidden" name="cliente_id" id="cliente-id" required>
+                </div>
+
+                <!-- Info del cliente seleccionado -->
+                <div id="info-cliente" class="hidden bg-gray-50 p-3 rounded-lg border border-gray-200 mb-3">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-medium text-gray-800" id="cliente-nombre"></p>
+                            <p class="text-sm text-gray-600" id="cliente-telefono"></p>
+                        </div>
+                        <button type="button" id="cambiar-cliente"
+                            class="text-hyf-primary text-sm hover:text-hyf-accent">
+                            Cambiar
+                        </button>
+                    </div>
+                </div>
+
+                <p class="text-sm text-gray-600">
+                    ¿No está el cliente?
+                    <button type="button" id="mostrar-form-cliente"
+                        class="text-hyf-primary underline font-semibold hover:text-hyf-accent transition">
+                        Crear nuevo
+                    </button>
+                </p>
+
+                <div id="form-nuevo-cliente"
+                    class="hidden bg-gray-50 border border-gray-200 rounded-xl p-4 mt-3 space-y-3 relative">
+                    <button type="button" id="cerrar-form-cliente" aria-label="Cerrar formulario cliente"
+                        class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 font-bold text-xl leading-none transition">
+                        &times;
+                    </button>
+
+                    <label class="block text-gray-700 font-medium">Nombre</label>
+                    <input type="text" id="nuevo-nombre" name="nombre_cliente" autocomplete="off"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition" />
+
+                    <label class="block text-gray-700 font-medium">Apellido</label>
+                    <input type="text" id="nuevo-apellido" name="apellido_cliente" autocomplete="off"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition" />
+
+                    <label class="block text-gray-700 font-medium">Teléfono</label>
+                    <input type="text" id="nuevo-telefono" name="telefono_cliente" autocomplete="off"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition" />
+
+                    <button type="button" id="crear-cliente"
+                        class="bg-hyf-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-hyf-accent transition w-full">
+                        Guardar cliente
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card Repuesto -->
+            <div
+                class="bg-gradient-to-br from-hyf-light to-white p-6 rounded-xl border border-gray-200 shadow-xs hover:shadow-sm transition-all">
+                <h3 class="text-sm font-bold text-gray-600 uppercase tracking-wider mb-4 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-hyf-accent bg-opacity-10 flex items-center justify-center">
+                        <i class="fas fa-cog text-hyf-accent"></i>
+                    </div>
+                    <span>Detalles del Repuesto</span>
+                </h3>
+
+                <div class="grid grid-cols-1 gap-4">
+                    <!-- Tipo de repuesto -->
+                    <div>
+                        <label for="tipo_repuesto" class="block text-sm font-medium text-gray-700 mb-1">Tipo de
+                            repuesto</label>
+                        <input type="text" name="tipo_repuesto" id="tipo_repuesto" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition"
+                            placeholder="Ej: Filtro de aceite, Pastillas de freno">
+                    </div>
+
+                    <!-- Tamaño -->
+                    <div>
+                        <label for="tamano" class="block text-sm font-medium text-gray-700 mb-1">Tamaño</label>
+                        <select name="tamano" id="tamano" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition">
+                            <option value="">-- Selecciona tamaño --</option>
+                            <option value="chico">Chico</option>
+                            <option value="grande">Grande</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cantidad y Precio -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Cantidad -->
+            <div class="bg-hyf-light p-5 rounded-lg border border-gray-200">
+                <label for="cantidad" class="block text-sm font-bold text-gray-700 mb-2">Cantidad</label>
+                <div class="relative">
+                    <input type="number" name="cantidad" id="cantidad" min="1" required
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition text-center"
+                        placeholder="1">
+                </div>
+            </div>
+
+            <!-- Precio -->
+            <div class="bg-hyf-light p-5 rounded-lg border border-gray-200">
+                <label for="precio" class="block text-sm font-bold text-gray-700 mb-2">Precio Unitario</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-3 text-gray-500">$</span>
+                    <input type="number" name="precio" id="precio" min="0" required
+                        class="w-full pl-8 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition text-right"
+                        placeholder="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Observación -->
+        <div class="bg-hyf-light p-5 rounded-lg border border-gray-200">
+            <label for="observacion" class="block text-sm font-bold text-gray-700 mb-2">Observaciones</label>
+            <textarea name="observacion" id="observacion" rows="4"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition resize-y"
+                placeholder="Agregue cualquier observación relevante"></textarea>
+        </div>
+
+        <!-- Total y acciones -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6 pt-6 border-t border-gray-200">
+            <div class="order-2 md:order-1">
+                <button type="submit"
+                    class="bg-hyf-success text-white px-8 py-3 rounded-lg font-bold hover:bg-green-700 transition">
+                    <i class="fas fa-save mr-2"></i> Crear Ticket
+                </button>
+            </div>
+            <div
+                class="order-1 md:order-2 bg-hyf-primary text-white px-8 py-4 rounded-lg min-w-[220px] text-center md:text-right">
+                <p class="text-sm uppercase tracking-wider text-hyf-accent mb-1">Total Estimado</p>
+                <p class="text-2xl font-bold">$<span id="total-preview">0</span> CLP</p>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="{{ url_for('static', filename='/js/form_ticket_repuesto.js') }}"></script>
+
+<script>
+    // Cálculo automático del total
+    document.addEventListener('DOMContentLoaded', function () {
+        const cantidadInput = document.getElementById('cantidad');
+        const precioInput = document.getElementById('precio');
+        const totalPreview = document.getElementById('total-preview');
+
+        function calcularTotal() {
+            const cantidad = parseFloat(cantidadInput.value) || 0;
+            const precio = parseFloat(precioInput.value) || 0;
+            const total = cantidad * precio;
+            totalPreview.textContent = total.toLocaleString('es-CL');
+        }
+
+        cantidadInput.addEventListener('input', calcularTotal);
+        precioInput.addEventListener('input', calcularTotal);
+    });
+</script>
+
+{% endblock %}

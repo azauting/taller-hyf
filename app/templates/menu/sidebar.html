@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Panel - HYF{% endblock %}</title>
+
+    <!-- Preload de recursos críticos -->
+    <link rel="preload" href="https://cdn.tailwindcss.com" as="script">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+        as="style">
+
+    <!-- CDNs -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Configuración de Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        hyf: {
+                            primary: '#0f172a',
+                            secondary: '#1e293b',
+                            accent: '#E2B036',
+                            dark: '#0a0a0a',
+                            light: '#f8fafc',
+                            danger: '#dc2626',
+                            success: '#16a34a',
+                            warning: '#d97706'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif'],
+                    },
+                    transitionProperty: {
+                        'width': 'width',
+                        'height': 'height'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Estilos adicionales -->
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background-color: rgba(156, 163, 175, 0.5);
+            border-radius: 3px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background-color: rgba(229, 231, 235, 0.1);
+        }
+
+        /* Animaciones para los toasts */
+        @keyframes toastIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes toastOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .toast {
+            animation: toastIn 0.3s ease-out forwards;
+        }
+
+        .toast.hiding {
+            animation: toastOut 0.3s ease-in forwards;
+        }
+    </style>
+</head>
+
+<body class="bg-hyf-accent font-sans antialiased h-full">
+    <div class="flex min-h-screen overflow-hidden">
+        <!-- Sidebar Desktop -->
+        <div
+            class="flex bg-hyf-primary text-white w-64 flex-col border-r border-hyf-secondary max-h-screen overflow-y-auto scrollbar-thin">
+            <!-- Logo -->
+            <div class=" border-b border-hyf-secondary flex justify-center items-center">
+                <img class="" src="{{ url_for('static', filename='logo1.png') }}" alt="H&F FRENOS Logo" style="height: 120px;">
+            </div>
+
+            <!-- Navegación -->
+            <nav class="mt-6 flex-1 px-3 flex flex-col">
+                <!-- Boton para el ticket -->
+                <button id="openModal"
+                    class="flex items-center justify-center p-3 mb-6 rounded-lg bg-hyf-accent text-hyf-dark font-semibold hover:bg-yellow-500 transition-colors w-full group">
+                    <i class="fa-solid fa-plus w-5 text-center mr-2 transition-transform group-hover:rotate-90"></i>
+                    <span>Nuevo ticket</span>
+                </button>
+
+                <div>
+                    <p class="uppercase text-xs text-gray-400 font-semibold mt-6 mb-2 px-2">Menu</p>
+
+                    <!-- Items de menú con tooltips para versión colapsada -->
+                    <div class="space-y-1 text-lg font-medium">
+                        <a href="{{ url_for('taller.tickets_en_taller') }}"
+                            class=" flex items-center px-3 py-2 rounded-lg transition-colors
+                            hover:bg-hyf-accent hover:bg-opacity-20 group
+                            {% if request.endpoint == 'taller.tickets_en_taller' %}bg-hyf-accent bg-opacity-30{% endif %}" data-tooltip="Taller">
+                            <i class="fa-solid fa-wrench w-5 text-center text-hyf-accent"></i>
+                            <span class="ml-3">Taller</span>
+                        </a>
+
+                        <a href="{{ url_for('taller.tabla_vehiculos') }}"
+                            class="flex items-center px-3 py-2 rounded-lg transition-colors
+                            hover:bg-hyf-accent hover:bg-opacity-20 group
+                            {% if request.endpoint == 'taller.tabla_vehiculos' %}bg-hyf-accent bg-opacity-30{% endif %}" data-tooltip="Vehículos">
+                            <i class="fa-solid fa-car w-5 text-center text-hyf-accent"></i>
+                            <span class="ml-3">Vehículos</span>
+                        </a>
+
+                        <a href="{{ url_for('taller.tabla_repuestos') }}"
+                            class="flex items-center px-3 py-2 rounded-lg transition-colors
+                            hover:bg-hyf-accent hover:bg-opacity-20 group
+                            {% if request.endpoint == 'taller.tabla_repuestos' %}bg-hyf-accent bg-opacity-30{% endif %}" data-tooltip="Repuestos">
+                            <i class="fa-solid fa-gear w-5 text-center text-hyf-accent"></i>
+                            <span class="ml-3">Repuestos</span>
+                        </a>
+
+                        <a href="{{ url_for('cliente.ver_clientes') }}" class="flex items-center px-3 py-2 rounded-lg transition-colors
+                            hover:bg-hyf-accent hover:bg-opacity-20 group
+                            {% if request.endpoint == 'cliente.ver_clientes' %}bg-hyf-accent bg-opacity-30{% endif %}"
+                            data-tooltip="Clientes">
+                            <i class="fa-solid fa-users w-5 text-center text-hyf-accent"></i>
+                            <span class="ml-3">Clientes</span>
+                        </a>
+
+                        <a href="{{ url_for('inventario.ver_inventario') }}"
+                            class="flex items-center px-3 py-2 rounded-lg transition-colors
+                            hover:bg-hyf-accent hover:bg-opacity-20 group
+                            {% if request.endpoint == 'inventario.ver_inventario' %}bg-hyf-accent bg-opacity-30{% endif %}" data-tooltip="Inventario">
+                            <i class="fa-solid fa-list-check w-5 text-center text-hyf-accent"></i>
+                            <span class="ml-3">Inventario</span>
+                        </a>
+
+                        <a href="{{ url_for('estadisticas.ver_estadisticas') }}"
+                            class="flex items-center px-3 py-2 rounded-lg transition-colors
+                            hover:bg-hyf-accent hover:bg-opacity-20 group
+                            {% if request.endpoint == 'estadisticas.ver_estadisticas' %}bg-hyf-accent bg-opacity-30{% endif %}" data-tooltip="Inventario">
+                            <i class="fa-solid fa-chart-simple w-5 text-center text-hyf-accent"></i>
+                            <span class="ml-3">Estadisticas</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Usuario y logout -->
+                <div class="border-t border-hyf-secondary p-4 mt-auto">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-hyf-accent flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-user text-hyf-dark"></i>
+                        </div>
+                        <div class="ml-3 overflow-hidden">
+                            <p class="font-medium truncate">{{ current_user.nombre }}</p>
+                            <p class="text-xs text-gray-400 capitalize">{{ current_user.rol }}</p>
+                        </div>
+                    </div>
+                    <form action="{{ url_for('auth.logout') }}" method="GET" class="mt-4">
+                        <button type="submit"
+                            class="flex items-center text-red-500 hover:text-red-700 transition-colors font-medium text-sm focus:outline-none focus:ring-2 focus:ring-red-400 rounded px-3 py-1 w-full justify-center">
+                            <i class="fa-solid fa-right-from-bracket mr-2"></i> Cerrar sesión
+                        </button>
+                    </form>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Contenido principal -->
+        <main class="flex-1 flex flex-col overflow-hidden h-screen">
+            <div class="flex-1 overflow-y-auto bg-hyf-accent scrollbar-thin">
+                <header class=" py-4 px-6">
+                    <h2 class="text-2xl text-hyf-primary font-semibold">{% block header %}Panel de HYF{% endblock %}
+                </header>
+                <!-- Modal para nuevo ticket -->
+                <div id="ticketModal"
+                    class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden transition-opacity duration-300">
+                    <div class="bg-white rounded-lg p-6 w-full max-w-sm shadow-xl relative transform transition-all duration-300 scale-95 opacity-0"
+                        id="modalContent">
+                        <h2 class="text-lg font-bold mb-4 text-gray-800">¿Qué tipo de ticket deseas crear?</h2>
+
+                        <div class="flex flex-col gap-4">
+                            <a href="{{ url_for('ticket_servicio.ticket_servicio_form') }}"
+                                class="w-full text-center px-4 py-2 rounded bg-hyf-accent text-hyf-dark hover:bg-yellow-500 transition-colors flex items-center justify-center gap-2">
+                                <i class="fas fa-car"></i> Vehículo
+                            </a>
+
+                            <a href="{{ url_for('ticket_repuesto.ticket_repuesto_form') }}"
+                                class="w-full text-center px-4 py-2 rounded bg-hyf-accent text-hyf-dark hover:bg-yellow-500 transition-colors flex items-center justify-center gap-2">
+                                <i class="fas fa-gear"></i> Repuesto
+                            </a>
+                        </div>
+
+                        <button id="closeModal"
+                            class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl rounded-full w-8 h-8 flex items-center justify-center hover:bg-gray-100 transition-colors">
+                            &times;
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contenedor de toasts -->
+                <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-3 w-80 max-w-full"></div>
+                <div class="p-4">
+                    {% block content %}
+                    <!-- Contenido específico de cada página -->
+                    {% endblock %}
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Función para mostrar toasts
+            function showToast(message, type = 'info') {
+                const toastContainer = document.getElementById('toastContainer');
+                const toastId = 'toast-' + Date.now();
+
+                // Mapear tipos a colores e iconos
+                const typeConfig = {
+                    success: {
+                        bg: 'bg-green-50',
+                        text: 'text-green-800',
+                        border: 'border-green-200',
+                        icon: 'fa-check-circle',
+                    },
+                    danger: {
+                        bg: 'bg-red-50',
+                        text: 'text-red-800',
+                        border: 'border-red-200',
+                        icon: 'fa-exclamation-circle',
+                    },
+                    warning: {
+                        bg: 'bg-yellow-50',
+                        text: 'text-yellow-800',
+                        border: 'border-yellow-200',
+                        icon: 'fa-exclamation-triangle',
+                    },
+                    info: {
+                        bg: 'bg-blue-50',
+                        text: 'text-blue-800',
+                        border: 'border-blue-200',
+                        icon: 'fa-info-circle',
+                    }
+                };
+
+                const config = typeConfig[type] || typeConfig.info;
+
+                // Crear elemento toast
+                const toast = document.createElement('div');
+                toast.id = toastId;
+                toast.className = `toast p-4 rounded-md shadow-lg border ${config.bg} ${config.text} ${config.border} flex items-start gap-3`;
+                toast.innerHTML = `
+                    <i class="fas ${config.icon} mt-0.5"></i>
+                    <div class="flex-1">${message}</div>
+                    <button onclick="dismissToast('${toastId}')" class="text-lg leading-none hover:opacity-70">
+                        &times;
+                    </button>
+                `;
+
+                // Agregar toast al contenedor
+                toastContainer.appendChild(toast);
+
+                // Auto-dismiss después de 5 segundos
+                setTimeout(() => dismissToast(toastId), 5000);
+            }
+
+            // Función para eliminar toasts
+            window.dismissToast = (toastId) => {
+                const toast = document.getElementById(toastId);
+                if (toast) {
+                    toast.classList.add('hiding');
+                    toast.addEventListener('animationend', () => toast.remove());
+                }
+            };
+
+            // Mostrar mensajes flash como toasts
+            {% with mensajes = get_flashed_messages(with_categories = true) %}
+            {% if mensajes %}
+            {% for categoria, mensaje in mensajes %}
+            showToast('{{ mensaje }}', '{{ categoria }}');
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            // Modal de nuevo ticket
+            const openBtn = document.getElementById('openModal');
+            const closeBtn = document.getElementById('closeModal');
+            const modal = document.getElementById('ticketModal');
+            const modalContent = document.getElementById('modalContent');
+
+            function openModal() {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modalContent.classList.remove('scale-95', 'opacity-0');
+                    modalContent.classList.add('scale-100', 'opacity-100');
+                }, 10);
+            }
+
+            function closeModal() {
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
+
+            openBtn?.addEventListener('click', openModal);
+            closeBtn?.addEventListener('click', closeModal);
+
+            modal?.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+
+            // Cerrar mensajes flash automáticamente después de 5 segundos
+            const flashMessages = document.getElementById('flashMessages');
+            if (flashMessages) {
+                setTimeout(() => {
+                    flashMessages.querySelectorAll('div').forEach(message => {
+                        message.style.opacity = '0';
+                        setTimeout(() => message.remove(), 300);
+                    });
+                }, 5000);
+            }
+
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,96 @@
+{% extends 'menu/sidebar.html' %}
+
+{% block title %}Agregar Producto | HYF{% endblock %}
+{% block header %}Agregar un nuevo producto{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow overflow-hidden">
+    <!-- Encabezado del formulario -->
+    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <h3 class="text-lg font-medium text-gray-900">Información del Producto</h3>
+        <p class="mt-1 text-sm text-gray-500">Complete todos los campos requeridos (*)</p>
+    </div>
+
+    <!-- Cuerpo del formulario -->
+    <form method="POST" class="divide-y divide-gray-200">
+        <div class="px-6 py-5 space-y-6">
+            <!-- Campo Nombre -->
+
+            <div class="md:col-span-2">
+                <label for="nombre" class="block text-sm font-medium text-gray-700">
+                    Nombre del producto <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="nombre" name="nombre" required
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-hyf-primary focus:border-hyf-primary sm:text-sm">
+            </div>
+
+            <!-- Campo Código -->
+            <div>
+                <label for="codigo" class="block text-sm font-medium text-gray-700">
+                    Código <span class="text-red-500">*</span>
+                </label>
+                <input type="text" id="codigo" name="codigo" required
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-hyf-primary focus:border-hyf-primary sm:text-sm">
+            </div>
+
+
+            <!-- Campo Stock -->
+            <div>
+                <label for="stock" class="block text-sm font-medium text-gray-700">
+                    Stock <span class="text-red-500">*</span>
+                </label>
+                <input type="number" id="stock" name="stock" min="0" required
+                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-hyf-primary focus:border-hyf-primary sm:text-sm">
+            </div>
+
+            <!-- Campo Precio -->
+            <div>
+                <label for="precio_compra" class="block text-sm font-medium text-gray-700">
+                    Precio de compra <span class="text-red-500">*</span>
+                </label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="text-gray-500 sm:text-sm">$</span>
+                    </div>
+                    <input type="number" id="precio_compra" name="precio_compra" min="0" required
+                        class="block w-full pl-7 pr-12 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-hyf-primary focus:border-hyf-primary sm:text-sm"
+                        placeholder="100">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <span class="text-gray-500 sm:text-sm">CLP</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Campo Precio -->
+            <div>
+                <label for="porcentaje" class="block text-sm font-medium text-gray-700">
+                    % De gananacia <span class="text-red-500">*</span>
+                </label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="text-gray-500 sm:text-sm">$</span>
+                    </div>
+                    <input type="number" id="porcentaje" name="porcentaje" min="0" required
+                        class="block w-full pl-7 pr-12 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-hyf-primary focus:border-hyf-primary sm:text-sm"
+                        placeholder="100">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                        <span class="text-gray-500 sm:text-sm">CLP</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie del formulario -->
+        <div class="px-6 py-4 bg-gray-50 text-right">
+            <a href="{{ url_for('inventario.ver_inventario') }}"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hyf-primary">
+                Cancelar
+            </a>
+            <button type="submit"
+                class="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-hyf-accent hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400">
+                Guardar producto
+            </button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

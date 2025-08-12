@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es" class="h-full bg-gray-100">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar contraseña - HYF</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        hyf: {
+                            primary: '#1e40af',
+                            secondary: '#1e3a8a',
+                            accent: '#f59e0b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body class="h-full">
+    <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-xl animate-fade-in">
+            <div class="text-center">
+                <!-- Logo de HYF - Igual que en login -->
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-hyf-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
+                    Recuperar contraseña
+                </h2>
+                <p class="mt-2 text-sm text-gray-600">
+                    Ingresa tu correo electrónico para recibir instrucciones
+                </p>
+            </div>
+
+            <!-- Mensajes flash -->
+            {% with mensajes = get_flashed_messages(with_categories=true) %}
+                {% if mensajes %}
+                    <div class="space-y-2">
+                        {% for categoria, mensaje in mensajes %}
+                            <div class="p-4 rounded-md {% if categoria == 'success' %}bg-green-50 text-green-800{% elif categoria == 'danger' %}bg-red-50 text-red-800{% else %}bg-blue-50 text-blue-800{% endif %}">
+                                {{ mensaje }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <form class="mt-8 space-y-6" method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="rounded-md shadow-sm space-y-4">
+                    <div>
+                        <label for="correo" class="block text-sm font-medium text-gray-700">
+                            Correo electrónico
+                        </label>
+                        <div class="mt-1 relative">
+                            {{ form.correo(class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-hyf-primary focus:border-hyf-primary sm:text-sm", placeholder="tu@email.com") }}
+                            {% if form.correo.errors %}
+                                <p class="mt-2 text-sm text-red-600">{{ form.correo.errors[0] }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <a href="{{ url_for('auth.login') }}" class="text-sm font-medium text-hyf-primary hover:text-hyf-secondary">
+                        ← Volver al inicio
+                    </a>
+                </div>
+
+                <div>
+                    <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-hyf-primary hover:bg-hyf-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hyf-primary transition-colors duration-200">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <svg class="h-5 w-5 text-hyf-accent group-hover:text-yellow-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                            </svg>
+                        </span>
+                        Enviar instrucciones
+                    </button>
+                </div>
+            </form>
+
+            <div class="text-center text-sm text-gray-500">
+                © 2025 HYF Taller de Frenos. Agustin Villarroel Dev
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,325 @@
+{% extends 'menu/sidebar.html' %}
+{% block title %}Crear Nuevo Ticket | HYF{% endblock %}
+{% block header %}Crear Nuevo Ticket{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto bg-white rounded-xl shadow-md overflow-hidden border border-gray-200 font-sans">
+    <!-- Encabezado con fondo oscuro -->
+    <div class="bg-hyf-primary text-white p-6">
+        <h1 class="text-2xl font-bold">Nuevo Ticket</h1>
+    </div>
+
+    <!-- Contenido principal -->
+    <form action="{{ url_for('ticket_servicio.ticket_servicio_crear') }}" method="POST" class="p-6 space-y-8">
+        <!-- Información básica en cards -->
+        <div class="grid grid-cols-1 gap-6">
+            <!-- Card Cliente -->
+            <div class="bg-hyf-light p-5 rounded-lg border border-gray-200">
+                <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <i class="fas fa-user text-hyf-accent"></i> Cliente
+                </h3>
+                
+                <!-- Buscador de clientes -->
+                <div class="relative">
+                    <input type="text" id="buscador-cliente" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition mb-3"
+                        placeholder="Buscar cliente por nombre o apellido..." autocomplete="off">
+                    
+                    <!-- Resultados del buscador -->
+                    <div id="resultados-cliente" class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                        <!-- Los resultados se cargarán aquí via JavaScript -->
+                    </div>
+                    
+                    <input type="hidden" name="cliente_id" id="cliente-id" required>
+                </div>
+
+                <!-- Info del cliente seleccionado -->
+                <div id="info-cliente" class="hidden bg-gray-50 p-3 rounded-lg border border-gray-200 mb-3">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="font-medium text-gray-800" id="cliente-nombre"></p>
+                            <p class="text-sm text-gray-600" id="cliente-telefono"></p>
+                        </div>
+                        <button type="button" id="cambiar-cliente" class="text-hyf-primary text-sm hover:text-hyf-accent">
+                            Cambiar
+                        </button>
+                    </div>
+                </div>
+
+                <p class="text-sm text-gray-600">
+                    ¿No está el cliente?
+                    <button type="button" id="mostrar-form-cliente"
+                        class="text-hyf-primary underline font-semibold hover:text-hyf-accent transition">
+                        Crear nuevo
+                    </button>
+                </p>
+
+                <div id="form-nuevo-cliente" class="hidden bg-gray-50 border border-gray-200 rounded-xl p-4 mt-3 space-y-3 relative">
+                    <button type="button" id="cerrar-form-cliente" aria-label="Cerrar formulario cliente"
+                        class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 font-bold text-xl leading-none transition">
+                        &times;
+                    </button>
+
+                    <label class="block text-gray-700 font-medium">Nombre</label>
+                    <input type="text" id="nuevo-nombre" name="nombre_cliente" autocomplete="off"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition" />
+
+                    <label class="block text-gray-700 font-medium">Apellido</label>
+                    <input type="text" id="nuevo-apellido" name="apellido_cliente" autocomplete="off"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition" />
+
+                    <label class="block text-gray-700 font-medium">Teléfono</label>
+                    <input type="text" id="nuevo-telefono" name="telefono_cliente" autocomplete="off"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition" />
+
+                    <button type="button" id="crear-cliente"
+                        class="bg-hyf-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-hyf-accent transition w-full">
+                        Guardar cliente
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card Vehículo -->
+            <div class="bg-gradient-to-br from-hyf-light to-white p-6 rounded-xl border border-gray-200 shadow-xs hover:shadow-sm transition-all duration-200">
+                <div class="flex flex-col gap-2">
+                    <!-- Encabezado con icono integrado -->
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-hyf-accent bg-opacity-10 flex items-center justify-center">
+                            <i class="fas fa-car text-hyf-accent text-lg"></i>
+                        </div>
+                        <h3 class="text-sm font-bold text-gray-600 uppercase tracking-wider">Vehículo</h3>
+                    </div>
+
+                    <select name="vehiculo_id" id="vehiculo-select"
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition mb-3">
+                        <option value="">-- Selecciona un vehículo --</option>
+                    </select>
+
+                    <p class="text-sm text-gray-600">
+                        ¿No está el vehículo?
+                        <button type="button" id="mostrar-form-vehiculo"
+                            class="text-hyf-primary underline font-semibold hover:text-hyf-accent transition">
+                            Crear nuevo
+                        </button>
+                    </p>
+
+                    <!-- Formulario nuevo vehículo -->
+                    <div id="form-nuevo-vehiculo" class="hidden bg-gray-50 border border-gray-200 rounded-xl p-4 mt-3 space-y-3 relative">
+                        <button type="button" id="cerrar-form-vehiculo" aria-label="Cerrar formulario vehículo"
+                            class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 font-bold text-xl leading-none transition">
+                            &times;
+                        </button>
+
+                        <label class="block text-gray-700 font-medium">Marca</label>
+                        <input id="marca" type="text" name="marca"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition" />
+
+                        <label class="block text-gray-700 font-medium">Modelo</label>
+                        <input id="modelo" type="text" name="modelo"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition" />
+
+                        <label class="block text-gray-700 font-medium">Patente</label>
+                        <input id="patente" type="text" name="patente"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:outline-none transition" />
+
+                        <button type="button" id="crear-vehiculo"
+                            class="bg-hyf-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-hyf-accent transition w-full">
+                            Guardar vehículo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Motivo y Observaciones -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="motivo" class="block text-sm font-bold text-gray-700 mb-2">Motivo de Ingreso</label>
+                <textarea id="motivo" name="motivo" rows="4" required
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-hyf-accent focus:border-hyf-accent"
+                    placeholder="Describa el motivo del ingreso al taller"></textarea>
+            </div>
+            <div>
+                <label for="observacion" class="block text-sm font-bold text-gray-700 mb-2">Observaciones</label>
+                <textarea id="observacion" name="observacion" rows="4"
+                    class="w-full p-3 border border-gray-300 rounded-lg focus:ring-hyf-accent focus:border-hyf-accent"
+                    placeholder="Agregue observaciones relevantes"></textarea>
+            </div>
+        </div>
+
+        <!-- Servicios y Productos -->
+        <div>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-3xl font-bold text-hyf-primary">Servicios y Productos</h3>
+                <button type="button" id="add-servicio"
+                    class="bg-hyf-accent text-hyf-primary px-4 py-2 rounded-lg font-bold hover:bg-opacity-90">
+                    <i class="fas fa-plus mr-2"></i> Agregar
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-hyf-secondary text-white">
+                        <tr>
+                            <th class="px-4 py-3 text-center text-sm font-bold uppercase">Tipo</th>
+                            <th class="px-4 py-3 text-left text-sm font-bold uppercase">Descripción</th>
+                            <th class="px-4 py-3 text-center text-sm font-bold uppercase">Cantidad</th>
+                            <th class="px-4 py-3 text-right text-sm font-bold uppercase">Precio Unit.</th>
+                            <th class="px-4 py-3 text-right text-sm font-bold uppercase">Subtotal</th>
+                            <th class="px-4 py-3 text-center text-sm font-bold uppercase">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="servicios-tbody">
+                        <tr class="servicio-row">
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <select name="tipo[]" class="w-full p-2 border border-gray-300 rounded focus:ring-hyf-accent focus:border-hyf-accent">
+                                    <option value="Servicio">Servicio</option>
+                                    <option value="Producto">Producto</option>
+                                </select>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <input type="text" name="descripcion[]" placeholder="Descripción" required
+                                    class="w-full p-2 border border-gray-300 rounded focus:ring-hyf-accent focus:border-hyf-accent">
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-center">
+                                <input type="number" name="cantidad[]" placeholder="Cantidad" min="1" required
+                                    class="w-16 p-2 border border-gray-300 rounded text-center focus:ring-hyf-accent focus:border-hyf-accent">
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-right">
+                                <div class="relative">
+                                    <span class="absolute left-3 top-2 text-gray-500">$</span>
+                                    <input type="number" name="precio_unitario[]" placeholder="0" min="0" step="0.01" required
+                                        class="w-full pl-8 pr-3 p-2 border border-gray-300 rounded text-right focus:ring-hyf-accent focus:border-hyf-accent">
+                                </div>
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-right font-semibold">
+                                $0
+                            </td>
+                            <td class="px-4 py-3 whitespace-nowrap text-center">
+                                <button type="button" class="remove-row text-hyf-danger hover:text-red-800">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Total y acciones -->
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6 pt-6 border-t border-gray-200">
+            <div class="order-2 md:order-1">
+                <button type="submit"
+                    class="bg-hyf-success text-white px-8 py-3 rounded-lg font-bold hover:bg-green-700 transition">
+                    <i class="fas fa-save mr-2"></i> Crear Ticket
+                </button>
+                <button type="button" id="descargar-pdf"
+                    class="ml-3 bg-hyf-primary text-white px-8 py-3 rounded-lg font-bold hover:bg-hyf-accent transition">
+                    <i class="fas fa-file-pdf mr-2"></i> Generar Cotización
+                </button>
+            </div>
+            <div class="order-1 md:order-2 bg-hyf-primary text-white px-8 py-4 rounded-lg min-w-[220px] text-center md:text-right">
+                <p class="text-sm uppercase tracking-wider text-hyf-accent mb-1">Total del Ticket</p>
+                <p class="text-2xl font-bold">$0 CLP</p>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="pdf-template"
+    style="display:none; max-width: 800px; padding: 40px; font-family: 'Helvetica', sans-serif; color: #0a0a0a; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #f8fafc;">
+
+    <!-- Professional header with logo and contact information -->
+    <div style="margin-bottom: 30px; border-bottom: 2px solid #E2B036; padding-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <img src="{{ url_for('static', filename='logo1.png') }}" alt="H&F FRENOS Logo" style="height: 60px;">
+                <div>
+                    <h1 style="color: #0f172a; font-size: 28px; margin: 0 0 5px 0; font-weight: 700;">H&F FRENOS</h1>
+                    <p style="font-size: 14px; color: #64748b; margin: 0;">Especialistas en sistemas de frenos</p>
+                </div>
+            </div>
+            <div style="text-align: right;">
+                <p style="font-size: 12px; color: #64748b; margin: 2px 0;">Punta Arenas, Chile</p>
+                <p style="font-size: 12px; color: #64748b; margin: 2px 0;">+56 9 74559737</p>
+                <p style="font-size: 12px; color: #64748b; margin: 2px 0;">Carlos Condell #234</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticket information -->
+    <div style="margin-bottom: 30px; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <h2 style="color: #1e293b; font-size: 20px; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">Cotización</h2>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div>
+                <p style="margin: 5px 0;"><strong style="color: #475569;">Cliente:</strong> <span id="pdf-cliente" style="color: #0f172a;"></span></p>
+                <p style="margin: 5px 0;"><strong style="color: #475569;">Vehículo:</strong> <span id="pdf-vehiculo" style="color: #0f172a;"></span></p>
+            </div>
+            <div>
+                <p style="margin: 5px 0;"><strong style="color: #475569;">Fecha:</strong> <span id="pdf-fecha" style="color: #0f172a;">{{ fecha_actual }}</span></p>
+                <p style="margin: 5px 0;"><strong style="color: #475569;">N° Ticket:</strong> <span id="pdf-numero" style="color: #0f172a;">{{ numero_ticket }}</span></p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 15px;">
+            <p style="margin: 8px 0;"><strong style="color: #475569;">Motivo</strong></p>
+            <p style="margin: 5px 0; padding: 10px; background: #f1f5f9; border-radius: 4px; border-left: 3px solid #E2B036;"><span id="pdf-motivo"></span></p>
+            
+            <p style="margin: 8px 0;"><strong style="color: #475569;">Observaciones</strong></p>
+            <p style="margin: 5px 0; padding: 10px; background: #f1f5f9; border-radius: 4px; border-left: 3px solid #E2B036;"><span id="pdf-observacion"></span></p>
+        </div>
+    </div>
+
+    <!-- Services table -->
+    <div style="margin-bottom: 30px; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        <h2 style="color: #1e293b; font-size: 20px; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">Servicios y Productos</h2>
+        
+        <table style="width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px;">
+            <thead>
+                <tr style="background-color: #1e293b; color: white;">
+                    <th style="padding: 12px 10px; border: 1px solid #334155; text-align: left;">Tipo</th>
+                    <th style="padding: 12px 10px; border: 1px solid #334155; text-align: left;">Descripción</th>
+                    <th style="padding: 12px 10px; border: 1px solid #334155; text-align: center; width: 80px;">Cantidad</th>
+                    <th style="padding: 12px 10px; border: 1px solid #334155; text-align: right; width: 100px;">Precio Unit.</th>
+                    <th style="padding: 12px 10px; border: 1px solid #334155; text-align: right; width: 100px;">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody id="pdf-servicios">
+                <!-- Services from JS -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Total and signature -->
+    <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+        <div style="width: 200px; border-top: 1px solid #e2e8f0; padding-top: 10px; text-align: center;">
+            <p style="margin: 5px 0; color: #475569;">Firma del Cliente</p>
+            <p style="height: 40px; margin-top: 30px; border-top: 1px dashed #cbd5e1;"></p>
+        </div>
+        
+        <div style="text-align: right; background-color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+            <p style="margin: 5px 0; font-size: 16px;">
+                <strong style="color: #475569;">TOTAL:</strong> 
+                <span style="color: #0f172a; font-weight: 700; font-size: 18px;">$<span id="pdf-subtotal">0</span> CLP</span>
+            </p>
+            <p style="margin: 5px 0; font-size: 12px; color: #64748b;">IVA incluido</p>
+        </div>
+    </div>
+
+    <!-- Professional footer -->
+    <div style="margin-top: 50px; text-align: center; font-size: 11px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 10px;">
+            <img src="{{ url_for('static', filename='logo1.png') }}" alt="HYF FRENOS Logo" style="height: 30px; opacity: 0.8;">
+        </div>
+        <p style="margin: 5px 0;">H&F FRENOS - Especialistas en sistemas de frenos</p>
+        <p style="margin: 5px 0;">Punta Arenas, Chile | Carlos Condell #234 | +56 9 74559737</p>
+        <p style="margin: 5px 0; font-size: 10px; color: #94a3b8;">Este documento es una cotización válida por 7 días desde su emisión</p>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='/js/form_ticket_vehiculo.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/cotizacion_vehiculo.js') }}"></script>
+
+
+{% endblock %}

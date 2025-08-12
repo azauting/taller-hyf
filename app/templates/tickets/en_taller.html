@@ -1,0 +1,242 @@
+{% extends 'menu/sidebar.html' %}
+{% block title %}Tickets - HYF{% endblock %}
+{% block header %}Tickets Activos{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-2">
+
+    <!-- Selector de vista mejorado -->
+    <div class="flex justify-center mb-8">
+        <div class="inline-flex rounded-lg overflow-hidden shadow-md border border-hyf-primary" role="group">
+            <!-- Botón Vehículos -->
+            <button id="btn-vehiculos" type="button" class="flex items-center gap-2 px-5 py-2 text-sm font-medium 
+                   bg-hyf-primary text-white 
+                   hover:bg-hyf-primary/90 
+                   focus:outline-none focus:ring-2 focus:ring-hyf-accent 
+                   transition-colors duration-200">
+                <i class="fas fa-car"></i>
+                Vehículos ({{ tickets_vehiculo|length }})
+            </button>
+
+            <!-- Botón Repuestos -->
+            <button id="btn-repuestos" type="button" class="flex items-center gap-2 px-5 py-2 text-sm font-medium 
+                   bg-hyf-light text-hyf-primary 
+                   hover:bg-hyf-secondary hover:text-white 
+                   focus:outline-none focus:ring-2 focus:ring-hyf-accent 
+                   transition-colors duration-200">
+                <i class="fas fa-cogs"></i>
+                Repuestos ({{ tickets_repuesto|length }})
+            </button>
+        </div>
+    </div>
+
+    <!-- Vehículos -->
+    <section id="seccion-vehiculos">
+        {% if tickets_vehiculo %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for ticket in tickets_vehiculo %}
+            {% set patente_formateada = ticket.vehiculo.patente[:2] + '-' + ticket.vehiculo.patente[2:4] + '-' +
+            ticket.vehiculo.patente[4:] %}
+            <div
+                class="bg-hyf-primary rounded-xl border border-gray-100 shadow-sm hover:shadow-lg hover:scale-[1.01] transition-all duration-200">
+
+                <!-- Encabezado -->
+                <div class="flex justify-between items-center p-4 border-b border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2">
+                            <i class="fas fa-car text-2xl text-hyf-accent"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-white">Ticket #{{ ticket.id }}</p>
+                            <p class="text-xs text-gray-300">{{ ticket.fecha_creacion.strftime('%d/%m/%Y') }}</p>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-xs font-medium
+                        {% if ticket.estado_pago == 'Pagado' %}
+                            bg-green-100 text-green-700
+                        {% else %}
+                            bg-yellow-100 text-yellow-700
+                        {% endif %}">
+                        {{ ticket.estado_pago }}
+                    </span>
+                </div>
+
+                <!-- Contenido -->
+                <div>
+                    <!-- Vehículo -->
+                    <div class="flex items-center gap-3 p-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-white">{{ ticket.vehiculo.marca }} {{
+                                ticket.vehiculo.modelo }}</h3>
+                            <p
+                                class="mt-1 inline-block px-2 py-1 text-xl text-white font-mono font-bold rounded border border-gray-200">
+                                {{ patente_formateada }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Motivo -->
+                    <div class="p-4">
+                        <p class="text-xs text-gray-200 mb-0.5">Motivo</p>
+                        <p class="text-lg text-white line-clamp-2">{{ ticket.motivo|truncate(100) }}</p>
+                    </div>
+
+                    <!-- Cliente -->
+                    <div class="flex flex-col justify-start gap-2 items-start border-t p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-user text-white mr-2"></i>
+                            <span class="text-sm text-white truncate max-w-[140px]">
+                                {{ ticket.vehiculo.cliente.nombre }} {{ ticket.vehiculo.cliente.apellido }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="px-4 py-3 border-t border-gray-100 bg-hyf-primary rounded-b-xl text-center">
+                    <a href="{{ url_for('ticket_servicio.ticket_servicio_ver', ticket_id=ticket.id) }}"
+                        class="inline-flex items-center text-sm font-medium text-white hover:text-hyf-accent transition-colors">
+                        Ver detalles
+                        <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-gray-50 rounded-lg p-8 text-center border border-gray-200">
+            <i class="fas fa-car text-4xl text-gray-300 mb-3"></i>
+            <p class="text-gray-600 font-medium mb-1">No hay vehículos en taller</p>
+            <p class="text-sm text-gray-500">Todos los tickets están completados</p>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Repuestos -->
+    <section id="seccion-repuestos" class="hidden">
+        {% if tickets_repuesto %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for ticket in tickets_repuesto %}
+            <div
+                class="bg-hyf-primary rounded-xl border border-gray-100 shadow-sm hover:shadow-lg hover:scale-[1.01] transition-all duration-200">
+
+                <!-- Encabezado -->
+                <div class="flex justify-between items-center p-4 border-b border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2">
+                            <i class="fas fa-cogs text-2xl text-hyf-accent"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-white">Ticket #{{ ticket.id }}</p>
+                            <p class="text-xs text-gray-300">{{ ticket.fecha_creacion.strftime('%d/%m/%Y') }}</p>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full text-xs font-medium
+                    {% if ticket.estado_pago == 'Pagado' %}
+                        bg-green-100 text-green-700
+                    {% else %}
+                        bg-yellow-100 text-yellow-700
+                    {% endif %}">
+                        {{ ticket.estado_pago }}
+                    </span>
+                </div>
+
+                <!-- Contenido -->
+                <div>
+                    <!-- Repuesto -->
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-white">{{ ticket.tipo_repuesto|capitalize }}</h3>
+                        <p
+                            class="mt-1 inline-block px-2 py-1 text-xl text-white font-mono font-bold rounded border border-gray-200">
+                            {{ ticket.tamano }}
+                        </p>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="p-4">
+                        <p class="text-xs text-gray-200 mb-0.5">Observación</p>
+                        <p class="text-lg text-white line-clamp-2">
+                            {{ ticket.observacion|truncate(100) }}
+                        </p>
+                    </div>
+                    <!-- Cliente -->
+                    <div class="flex flex-col justify-start gap-2 items-start border-t p-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-user text-white mr-2"></i>
+                            <span class="text-sm text-white truncate max-w-[140px]">
+                                {{ ticket.cliente.nombre }} {{ ticket.cliente.apellido }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="px-4 py-3 border-t border-gray-100 bg-hyf-primary rounded-b-xl text-center">
+                    <a href="{{ url_for('ticket_repuesto.ticket_repuesto_ver', ticket_id=ticket.id) }}"
+                        class="inline-flex items-center text-sm font-medium text-white hover:text-hyf-accent transition-colors">
+                        Ver detalles
+                        <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="bg-gray-50 rounded-lg p-8 text-center border border-gray-200">
+            <i class="fas fa-box-open text-4xl text-gray-300 mb-3"></i>
+            <p class="text-gray-600 font-medium mb-1">No hay repuestos en taller</p>
+            <p class="text-sm text-gray-500">Todos los pedidos están completados</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const btnVehiculos = document.getElementById('btn-vehiculos');
+    const btnRepuestos = document.getElementById('btn-repuestos');
+    const seccionVehiculos = document.getElementById('seccion-vehiculos');
+    const seccionRepuestos = document.getElementById('seccion-repuestos');
+
+    function cambiarVista(activa) {
+        if (activa === 'vehiculos') {
+            // Mostrar vehículos
+            seccionVehiculos.classList.remove('hidden');
+            seccionRepuestos.classList.add('hidden');
+
+            // Botón activo
+            btnVehiculos.classList.remove('bg-hyf-light', 'text-hyf-primary', 'hover:bg-hyf-secondary', 'hover:text-white');
+            btnVehiculos.classList.add('bg-hyf-primary', 'text-white', 'hover:bg-hyf-primary/90');
+
+            // Botón inactivo
+            btnRepuestos.classList.remove('bg-hyf-primary', 'text-white', 'hover:bg-hyf-primary/90');
+            btnRepuestos.classList.add('bg-hyf-light', 'text-hyf-primary', 'hover:bg-hyf-secondary', 'hover:text-white');
+        } else {
+            // Mostrar repuestos
+            seccionVehiculos.classList.add('hidden');
+            seccionRepuestos.classList.remove('hidden');
+
+            // Botón activo
+            btnRepuestos.classList.remove('bg-hyf-light', 'text-hyf-primary', 'hover:bg-hyf-secondary', 'hover:text-white');
+            btnRepuestos.classList.add('bg-hyf-primary', 'text-white', 'hover:bg-hyf-primary/90');
+
+            // Botón inactivo
+            btnVehiculos.classList.remove('bg-hyf-primary', 'text-white', 'hover:bg-hyf-primary/90');
+            btnVehiculos.classList.add('bg-hyf-light', 'text-hyf-primary', 'hover:bg-hyf-secondary', 'hover:text-white');
+        }
+    }
+
+    btnVehiculos.addEventListener('click', () => cambiarVista('vehiculos'));
+    btnRepuestos.addEventListener('click', () => cambiarVista('repuestos'));
+});
+</script>
+
+<style>
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}

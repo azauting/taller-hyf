@@ -1,0 +1,328 @@
+{% extends 'menu/sidebar.html' %}
+
+{% macro url_for_page(p) %}
+{%- set args = request.args.to_dict() -%}
+{%- set _ = args.update({'page': p}) -%}
+{{ url_for('taller.tabla_repuestos', **args) }}
+{% endmacro %}
+
+{% block title %}Tickets repuestos - HYF{% endblock %}
+{% block header %}Panel de Control de Repuestos{% endblock %}
+
+{% block content %}
+<!-- Tarjetas resumen -->
+<div class="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6">
+    <!-- Tarjeta En Taller -->
+    <div class="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg p-3 border border-yellow-200 flex items-center shadow-xs hover:shadow-sm transition">
+        <div class="p-2 rounded-md bg-yellow-100 text-yellow-600 mr-3">
+            <i class="fas fa-tools"></i>
+        </div>
+        <div>
+            <p class="text-xs font-medium text-yellow-800">En Taller</p>
+            <p class="text-lg font-semibold text-yellow-900">{{ counts_taller.get('En taller', 0) }}</p>
+        </div>
+    </div>
+
+    <!-- Tarjeta Terminados -->
+    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-3 border border-blue-200 flex items-center shadow-xs hover:shadow-sm transition">
+        <div class="p-2 rounded-md bg-blue-100 text-blue-600 mr-3">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div>
+            <p class="text-xs font-medium text-blue-800">Terminados</p>
+            <p class="text-lg font-semibold text-blue-900">{{ counts_taller.get('Terminado', 0) }}</p>
+        </div>
+    </div>
+
+    <!-- Tarjeta Entregados -->
+    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-3 border border-green-200 flex items-center shadow-xs hover:shadow-sm transition">
+        <div class="p-2 rounded-md bg-green-100 text-green-600 mr-3">
+            <i class="fas fa-check-double"></i>
+        </div>
+        <div>
+            <p class="text-xs font-medium text-green-800">Entregados</p>
+            <p class="text-lg font-semibold text-green-900">{{ counts_taller.get('Entregado', 0) }}</p>
+        </div>
+    </div>
+
+    <!-- Tarjeta Cancelados -->
+    <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-lg p-3 border border-red-200 flex items-center shadow-xs hover:shadow-sm transition">
+        <div class="p-2 rounded-md bg-red-100 text-red-600 mr-3">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <div>
+            <p class="text-xs font-medium text-red-800">Cancelados</p>
+            <p class="text-lg font-semibold text-red-900">{{ counts_taller.get('Cancelado', 0) }}</p>
+        </div>
+    </div>
+
+    <!-- Tarjeta Pendientes de Pago -->
+    <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-3 border border-orange-200 flex items-center shadow-xs hover:shadow-sm transition">
+        <div class="p-2 rounded-md bg-orange-100 text-orange-600 mr-3">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div>
+            <p class="text-xs font-medium text-orange-800">Pendientes</p>
+            <p class="text-lg font-semibold text-orange-900">{{ counts_pago.get('Pendiente', 0) }}</p>
+        </div>
+    </div>
+
+    <!-- Tarjeta Pagados -->
+    <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-3 border border-purple-200 flex items-center shadow-xs hover:shadow-sm transition">
+        <div class="p-2 rounded-md bg-purple-100 text-purple-600 mr-3">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div>
+            <p class="text-xs font-medium text-purple-800">Pagados</p>
+            <p class="text-lg font-semibold text-purple-900">{{ counts_pago.get('Pagado', 0) }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- Tabla -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <!-- Barra de herramientas -->
+    <form method="GET" action="{{ url_for('taller.tabla_repuestos') }}"
+        class="flex flex-col sm:flex-row sm:items-center justify-between p-3 border-b border-gray-100 bg-gray-50 rounded-t-xl gap-2">
+
+        <a href="{{ url_for('taller.tabla_repuestos') }}"
+            class="btn-reset px-3 py-1.5 text-sm rounded-lg transition-colors flex items-center justify-center">
+            <i class="fas fa-redo sm:mr-1"></i>
+            <span class="hidden sm:inline">Resetear</span>
+        </a>
+
+        <div class="relative flex-grow sm:w-48">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400 text-sm"></i>
+            </div>
+            <input type="text" name="buscar" placeholder="Buscar..." value="{{ search_termino if search_termino }}"
+                class="pl-9 pr-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:border-hyf-primary w-full">
+        </div>
+
+        <select name="estado_taller"
+            class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-hyf-primary focus:border-hyf-primary">
+            <option value="">Estado del repuesto</option>
+            <option value="En taller" {% if estado_taller_filtro=='En taller' %}selected{% endif %}>En taller</option>
+            <option value="Terminado" {% if estado_taller_filtro=='Terminado' %}selected{% endif %}>Terminado</option>
+            <option value="Entregado" {% if estado_taller_filtro=='Entregado' %}selected{% endif %}>Entregado</option>
+            <option value="Cancelado" {% if estado_taller_filtro=='Cancelado' %}selected{% endif %}>Cancelado</option>
+        </select>
+
+        <select name="estado_pago"
+            class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-hyf-primary focus:border-hyf-primary">
+            <option value="">Estado de pago</option>
+            <option value="Pendiente" {% if estado_pago_filtro=='Pendiente' %}selected{% endif %}>Pendiente</option>
+            <option value="Pagado" {% if estado_pago_filtro=='Pagado' %}selected{% endif %}>Pagado</option>
+        </select>  
+        <!-- Campo de fecha con datepicker -->
+        <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="far fa-calendar-alt text-gray-400"></i>
+            </div>
+            <input type="text" name="fecha" value="{{ fecha if fecha }}" placeholder="DD-MM-AAAA"
+                class="datepicker pl-9 pr-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-hyf-primary focus:border-hyf-primary w-full"
+                data-date-format="d-m-Y" readonly>
+        </div>
+
+        <!-- Botón de filtrar -->
+        <button type="submit"
+            class="bg-hyf-primary text-white px-3 py-1.5 text-sm rounded-lg hover:bg-hyf-secondary transition-colors">
+            <i class="fas fa-filter sm:mr-1"></i>
+            <span class="hidden sm:inline">Filtrar</span>
+        </button>
+    </form>
+
+    <div class="flex-grow overflow-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50 sticky top-0">
+                <tr>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Repuesto
+                    </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Cliente
+                    </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Cantidad
+                    </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Fecha
+                    </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Estado
+                    </th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Pago
+                    </th>
+                    <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Acciones
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for ticketRepuesto, cliente in ticketsRepuesto %}
+                <tr class="hover:bg-gray-50 transition-colors duration-150">
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-8 w-8 rounded-md flex items-center justify-center mr-2 
+                                {% if ticketRepuesto.estado_taller == 'En taller' %}bg-yellow-100 text-yellow-600
+                                {% elif ticketRepuesto.estado_taller == 'Terminado' %}bg-blue-100 text-blue-600
+                                {% elif ticketRepuesto.estado_taller == 'Entregado' %}bg-green-100 text-green-600
+                                {% elif ticketRepuesto.estado_taller == 'Cancelado' %}bg-red-100 text-red-600
+                                {% else %}bg-gray-100 text-gray-600{% endif %}">
+                                <i class="fas 
+                                    {% if ticketRepuesto.estado_taller == 'En taller' %}fa-tools
+                                    {% elif ticketRepuesto.estado_taller == 'Terminado' %}fa-check-circle
+                                    {% elif ticketRepuesto.estado_taller == 'Entregado' %}fa-check-double
+                                    {% elif ticketRepuesto.estado_taller == 'Cancelado' %}fa-times-circle
+                                    {% else %}fa-ban{% endif %} text-sm"></i>
+                            </div>
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">{{ ticketRepuesto.tipo_repuesto | capitalize }}</div>
+                                <div class="text-xs text-gray-500">#{{ ticketRepuesto.id }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">{{ cliente.nombre }} {{ cliente.apellido }}</div>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {{ ticketRepuesto.cantidad }}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
+                        {{ ticketRepuesto.fecha_creacion.strftime('%d/%m/%y') }}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <span class="px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            {% if ticketRepuesto.estado_taller == 'En taller' %}bg-yellow-100 text-yellow-800
+                            {% elif ticketRepuesto.estado_taller == 'Terminado' %}bg-blue-100 text-blue-800
+                            {% elif ticketRepuesto.estado_taller == 'Entregado' %}bg-green-100 text-green-800
+                            {% elif ticketRepuesto.estado_taller == 'Cancelado' %}bg-red-100 text-red-800
+                            {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {{ ticketRepuesto.estado_taller }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                        <span class="px-2.5 py-1 inline-flex text-xs font-medium rounded-full 
+                            {% if ticketRepuesto.estado_pago == 'Pendiente' %}
+                                bg-red-100 text-red-800
+                            {% elif ticketRepuesto.estado_pago == 'Pagado' %}
+                                bg-green-100 text-green-800
+                                {% else %}
+                                bg-gray-100 text-gray-800
+                            {% endif %}">
+                            <i class="fas 
+                                {% if ticketRepuesto.estado_pago == 'Pendiente' %}fa-clock
+                                {% elif ticketRepuesto.estado_pago == 'Pagado' %}fa-check-circle
+                                {% else %}fa-question-circle{% endif %} mr-1 mt-0.5">
+                            </i>
+                            {{ ticketRepuesto.estado_pago }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                        <div class="flex justify-end space-x-2">
+                            <a href="{{ url_for('ticket_repuesto.ticket_repuesto_ver', ticket_id=ticketRepuesto.id) }}"
+                                class="text-xs leading-5 font-semibold text-blue-500 bg-blue-200 py-0.5 px-2 rounded-full" title="Ver detalle">
+                                <i class="fas fa-eye"></i> Ver detalle
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="px-6 py-8 text-center">
+                        <div class="flex flex-col items-center justify-center">
+                            <i class="fas fa-box-open text-3xl text-gray-300 mb-3"></i>
+                            <h3 class="text-base font-medium text-gray-700">No se encontraron tickets</h3>
+                            <p class="text-sm text-gray-500 mt-1">Intenta ajustar tus filtros de búsqueda</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginacion -->
+    {% if total_pages > 1 %}
+    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 rounded-b-xl">
+        <div class="flex-1 flex justify-between sm:hidden">
+            {% if page > 1 %}
+            <a href="{{ url_for_page(page - 1) }}"
+                class="relative inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                Anterior
+            </a>
+            {% endif %}
+            {% if page < total_pages %}
+            <a href="{{ url_for_page(page + 1) }}"
+                class="ml-2 relative inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                Siguiente
+            </a>
+            {% endif %}
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm text-gray-700">
+                    Mostrando <span class="font-medium">{{ (page - 1) * per_page + 1 }}</span> a
+                    <span class="font-medium">{{ [page * per_page, total_items]|min }}</span> de
+                    <span class="font-medium">{{ total_items }}</span> resultados
+                </p>
+            </div>
+            <div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    {% if page > 1 %}
+                    <a href="{{ url_for_page(page - 1) }}"
+                        class="relative inline-flex items-center px-2 py-1.5 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Anterior</span>
+                        <i class="fas fa-chevron-left h-3 w-3"></i>
+                    </a>
+                    {% endif %}
+
+                    {% for p in range(1, total_pages + 1) %}
+                    <a href="{{ url_for_page(p) }}"
+                        class="relative inline-flex items-center px-3 py-1.5 border text-sm font-medium {% if p == page %}z-10 bg-hyf-primary border-hyf-primary text-white{% else %}bg-white border-gray-300 text-gray-700 hover:bg-gray-50{% endif %}">
+                        {{ p }}
+                    </a>
+                    {% endfor %}
+
+                    {% if page < total_pages %}
+                    <a href="{{ url_for_page(page + 1) }}"
+                        class="relative inline-flex items-center px-2 py-1.5 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Siguiente</span>
+                        <i class="fas fa-chevron-right h-3 w-3"></i>
+                    </a>
+                    {% endif %}
+                </nav>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Configuración del datepicker
+        flatpickr(".datepicker", {
+            dateFormat: "d-m-Y",
+            allowInput: true,
+            locale: "es",
+            disableMobile: true,
+            onReady: function (selectedDates, dateStr, instance) {
+                instance.altInput.placeholder = "DD-MM-AAAA";
+            }
+        });
+
+        // Validación del formato de fecha antes de enviar el formulario
+        const form = document.querySelector('form[method="GET"]');
+        form.addEventListener('submit', function (e) {
+            const fechaInput = form.querySelector('input[name="fecha"]');
+            if (fechaInput.value && !/^\d{2}-\d{2}-\d{4}$/.test(fechaInput.value)) {
+                e.preventDefault();
+                alert('Por favor ingresa la fecha en formato DD-MM-AAAA');
+                fechaInput.focus();
+            }
+        });
+    });
+</script>
+{% endblock %}
