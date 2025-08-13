@@ -3,119 +3,113 @@
 {% block header %}Editar Ticket de Repuesto{% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-6">
-    <form method="POST" class="space-y-4">
-        <!-- Encabezado rápido -->
-        <div class="flex justify-between items-center border-b pb-3">
+
+<form method="POST" class="max-w-xl mx-auto bg-hyf-primary rounded-lg shadow-md overflow-hidden border border-gray-200">
+    <div class="p-4">
+        <div class="flex justify-between items-start">
             <div>
-                <h1 class="text-lg font-bold">Repuesto #{{ ticket.id }}</h1>
-                <p class="text-gray-600 text-sm">
-                    {{ ticket.fecha_creacion.strftime('%d/%m/%Y %H:%M') if ticket.fecha_creacion else 'Sin fecha' }}
+                <h1 class="text-white text-2xl font-bold">#{{ ticket.id }}</h1>
+                <div class="flex items-center mt-1 space-x-4 text-md text-white">
+                    <span><i class="far fa-calendar-alt mr-1"></i> {{ ticket.fecha_creacion.strftime('%d/%m/%Y
+                        %H:%M') }}</span>
                     {% if ticket.fecha_de_pago %}
-                    | Pagado: {{ ticket.fecha_de_pago.strftime('%d/%m/%Y %H:%M') }}
+                    <span class="bg-green-500 px-2 py-0.5 rounded text-white"><i class="fas fa-check-circle mr-1"></i>
+                        Pagado</span>
                     {% endif %}
-                </p>
+                </div>
             </div>
-            <div class="flex gap-2">
-                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+            <div class="flex space-x-2">
+                <span class="bg-hyf-accent text-hyf-primary px-2 py-1 rounded-full text-xs font-bold uppercase">
                     {{ ticket.estado_taller }}
                 </span>
-                <span class="bg-{{ 'green' if ticket.estado_pago == 'Pagado' else 'yellow' }}-100 text-{{ 'green' if ticket.estado_pago == 'Pagado' else 'yellow' }}-800 px-2 py-1 rounded text-xs">
+                <span
+                    class="bg-{{ 'green-500' if ticket.estado_pago == 'Pagado' else 'red-500' }} text-white px-2 py-1 rounded-full text-xs font-bold uppercase">
                     {{ ticket.estado_pago }}
                 </span>
             </div>
         </div>
-
-        <!-- Información básica -->
-        <div class="bg-gray-50 p-3 rounded mb-4">
-            <p class="font-medium">{{ ticket.cliente.nombre }}</p>
-            <p class="text-sm text-gray-600">Tel: {{ ticket.cliente.telefono }}</p>
-        </div>
-
+    </div>
+    <div class="p-4 gap-4 flex flex-col">
         <!-- Campos editables -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de repuesto</label>
-                <input type="text" name="tipo_repuesto" value="{{ ticket.tipo_repuesto }}" class="w-full border rounded p-2" required>
+                <label class="block text-sm font-medium text-white mb-1">Tipo de repuesto</label>
+                <input type="text" name="tipo_repuesto" value="{{ ticket.tipo_repuesto }}"
+                    class="w-full border rounded p-2" required>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Tamaño/Especificaciones</label>
+                <label class="block text-sm font-medium text-white mb-1">Tamaño/Especificaciones</label>
                 <input type="text" name="tamano" value="{{ ticket.tamano }}" class="w-full border rounded p-2">
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Cantidad</label>
-                <input type="number" name="cantidad" value="{{ ticket.cantidad }}" min="1" class="w-full border rounded p-2" required>
+                <label class="block text-sm font-medium text-white mb-1">Cantidad</label>
+                <input type="number" name="cantidad" value="{{ ticket.cantidad }}" min="1"
+                    class="w-full border rounded p-2" required>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Precio Unitario</label>
+                <label class="block text-sm font-medium text-white mb-1">Precio Unitario</label>
                 <div class="relative">
                     <span class="absolute left-2 top-2">$</span>
-                    <input type="number" name="precio" value="{{ ticket.precio }}" min="0" class="w-full pl-6 border rounded p-2" required>
+                    <input type="number" name="precio" value="{{ ticket.precio }}" min="0"
+                        class="w-full pl-6 border rounded p-2" required>
                 </div>
             </div>
         </div>
 
         <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+            <label class="block text-sm font-medium text-white mb-1">Observaciones</label>
             <textarea name="observacion" rows="2" class="w-full border rounded p-2">{{ ticket.observacion }}</textarea>
         </div>
 
         <!-- Estados -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Estado en Taller</label>
+                <label class="block text-sm font-medium text-white mb-1">Estado en Taller</label>
                 <select name="estado_taller" class="w-full border rounded p-2">
-                    <option value="En taller" {% if ticket.estado_taller=='En taller' %}selected{% endif %}>En taller</option>
-                    <option value="Terminado" {% if ticket.estado_taller=='Terminado' %}selected{% endif %}>Terminado</option>
-                    <option value="Entregado" {% if ticket.estado_taller=='Entregado' %}selected{% endif %}>Entregado</option>
-                    <option value="Cancelado" {% if ticket.estado_taller=='Cancelado' %}selected{% endif %}>Cancelado</option>
+                    <option value="En taller" {% if ticket.estado_taller=='En taller' %}selected{% endif %}>En taller
+                    </option>
+                    <option value="Terminado" {% if ticket.estado_taller=='Terminado' %}selected{% endif %}>Terminado
+                    </option>
+                    <option value="Entregado" {% if ticket.estado_taller=='Entregado' %}selected{% endif %}>Entregado
+                    </option>
+                    <option value="Cancelado" {% if ticket.estado_taller=='Cancelado' %}selected{% endif %}>Cancelado
+                    </option>
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Estado de Pago</label>
+                <label class="block text-sm font-medium text-white mb-1">Estado de Pago</label>
                 <select name="estado_pago" class="w-full border rounded p-2">
-                    <option value="Pendiente" {% if ticket.estado_pago=='Pendiente' %}selected{% endif %}>Pendiente</option>
+                    <option value="Pendiente" {% if ticket.estado_pago=='Pendiente' %}selected{% endif %}>Pendiente
+                    </option>
                     <option value="Pagado" {% if ticket.estado_pago=='Pagado' %}selected{% endif %}>Pagado</option>
                 </select>
             </div>
         </div>
-
-        <!-- Total y botones -->
-        <div class="flex flex-col md:flex-row justify-between items-center mt-6 pt-4 border-t">
-            <div class="space-x-3 mb-4 md:mb-0">
-                <button type="submit" class="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700">
-                    Guardar
-                </button>
-                <a href="{{ url_for('taller.tabla_repuestos') }}" class="bg-gray-300 text-gray-800 px-5 py-2 rounded hover:bg-gray-400">
-                    Volver
+    </div>
+    <!-- Total y botones -->
+    <div class="bg-white px-4 py-3 border-t">
+        <div class="flex justify-between items-center">
+            <div class="flex space-x-2">
+                <a href="{{ url_for('ticket_repuesto.ticket_repuesto_ver', ticket_id=ticket.id) }}"
+                    class="text-hyf-primary hover:bg-hyf-primary hover:text-white font-bold text-md flex items-center px-3 py-1 border border-hyf-primary rounded">
+                    <i class="fas fa-arrow-left mr-1"></i>Volver
                 </a>
+                <button type="submit" class="bg-hyf-secondary text-white font-bold text-md flex items-center px-3 py-1 rounded hover:bg-hyf-accent transition">
+                    <i class="fas fa-save mr-1"></i>Guardar
+                </button>
+                
             </div>
-            <div class="bg-gray-100 px-5 py-2 rounded">
-                <p class="text-sm text-gray-600">Total: <span class="font-bold">${{ "{:,.0f}".format(ticket.precio * ticket.cantidad).replace(",", ".") }}</span></p>
+            <div class="text-right">
+                <p class="text-sm text-gray-800 uppercase">Total</p>
+                <p class="text-xl text-hyf-primary font-bold">${{ "{0:,.0f}".format(ticket.precio *
+                    ticket.cantidad).replace(",",
+                    ".") }} CLP</p>
             </div>
         </div>
-    </form>
-</div>
+    </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Actualizar total en tiempo real
-    const cantidadInput = document.querySelector('input[name="cantidad"]');
-    const precioInput = document.querySelector('input[name="precio"]');
-    const totalDisplay = document.querySelector('.bg-gray-100 .font-bold');
-    
-    function updateTotal() {
-        const cantidad = parseInt(cantidadInput.value) || 0;
-        const precio = parseInt(precioInput.value) || 0;
-        const total = cantidad * precio;
-        totalDisplay.textContent = '$' + total.toLocaleString('es-CL');
-    }
-    
-    cantidadInput.addEventListener('input', updateTotal);
-    precioInput.addEventListener('input', updateTotal);
-});
-</script>
+</form>
 {% endblock %}

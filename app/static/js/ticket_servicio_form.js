@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-center">
                     <button type="button" class="remove-row text-hyf-danger hover:text-red-800">
-                        <i class="fas fa-trash-alt"></i>
+                        <i class="fas fa-trash-alt"></i> Eliminar
                     </button>
                 </td>
             </tr>

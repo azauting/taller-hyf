@@ -1,68 +1,66 @@
 {% extends 'menu/sidebar.html' %}
 {% block title %}Editar Ticket #{{ ticket.id }} - HYF{% endblock %}
-{% block header %}Editar Ticket de Servicio{% endblock %}
+{% block header %}Editar Ticket{% endblock %}
 
 {% block content %}
-<div class="bg-gray-100 rounded-md px-4 py-6">
-    <form method="POST" class="space-y-6">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+
+<form method="POST"
+    class="max-w-3xl mx-auto bg-hyf-primary rounded-lg shadow-md overflow-hidden border border-gray-200">
+    <!-- Campos editables principales -->
+    <div class="p-4">
+        <div class="flex justify-between items-start mb-4">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Ticket Servicio #{{ ticket.id }}</h1>
-                <div class="flex items-center mt-2 space-x-4">
-                    <p class="text-gray-600">
-                        <i class="far fa-calendar-alt mr-2 text-hyf-accent"></i>
-                        {{ ticket.fecha_creacion.strftime('%d/%m/%Y %H:%M') if ticket.fecha_creacion else 'Fecha no
-                        disponible' }}
-                    </p>
+                <h1 class="text-white text-2xl font-bold">#{{ ticket.id }}</h1>
+                <div class="flex items-center mt-1 space-x-4 text-sm text-white">
+                    <span><i class="far fa-calendar-alt mr-1"></i> {{ ticket.fecha_creacion.strftime('%d/%m/%Y %H:%M')
+                        }}</span>
                     {% if ticket.fecha_de_pago %}
-                    <p class="text-green-600">
-                        <i class="fas fa-check-circle mr-2"></i>
-                        Pagado el: {{ ticket.fecha_de_pago.strftime('%d/%m/%Y %H:%M') }}
-                    </p>
+                    <span class="bg-green-500 px-2 py-0.5 rounded"><i class="fas fa-check-circle mr-1"></i>
+                        Pagado</span>
                     {% endif %}
                 </div>
             </div>
-
-            <div class="flex space-x-2 mt-4 md:mt-0">
-                <span class="bg-hyf-accent text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+            <div class="flex space-x-2">
+                <span class="bg-hyf-accent text-hyf-primary px-2 py-1 rounded-full text-xs font-bold uppercase">
                     {{ ticket.estado_taller }}
                 </span>
                 <span
-                    class="bg-{{ 'green-500' if ticket.estado_pago == 'Pagado' else 'yellow-500' }} text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+                    class="bg-{{ 'green-500' if ticket.estado_pago == 'Pagado' else 'red-500' }} text-white px-2 py-1 rounded-full text-xs font-bold uppercase">
                     {{ ticket.estado_pago }}
                 </span>
             </div>
         </div>
-
-        <!-- Campos editables principales -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Motivo</label>
+                <label class="block text-sm font-medium text-white mb-1">Motivo</label>
                 <textarea name="motivo" rows="3" class="w-full border rounded p-2">{{ ticket.motivo }}</textarea>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Observaciones</label>
+                <label class="block text-sm font-medium text-white mb-1">Observaciones</label>
                 <textarea name="observacion" rows="3"
                     class="w-full border rounded p-2">{{ ticket.observacion }}</textarea>
             </div>
         </div>
-
         <!-- Estados -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Estado Taller</label>
+                <label class="block text-sm font-medium text-white mb-1">Estado Taller</label>
                 <select name="estado_taller" class="w-full border rounded p-2">
-                    <option value="En taller" {% if ticket.estado_taller=='En taller' %}selected{% endif %}>En taller
+                    <option value="En taller" {% if ticket.estado_taller=='En taller' %}selected{% endif %}>En
+                        taller
                     </option>
-                    <option value="Terminado" {% if ticket.estado_taller=='Terminado' %}selected{% endif %}>Terminado
+                    <option value="Terminado" {% if ticket.estado_taller=='Terminado' %}selected{% endif %}>
+                        Terminado
                     </option>
-                    <option value="Entregado" {% if ticket.estado_taller=='Entregado' %}selected{% endif %}>Entregado
+                    <option value="Entregado" {% if ticket.estado_taller=='Entregado' %}selected{% endif %}>
+                        Entregado
                     </option>
-                    <option value="Cancelado" {% if ticket.estado_taller=='Cancelado' %}selected{% endif %}>Cancelado</option>
+                    <option value="Cancelado" {% if ticket.estado_taller=='Cancelado' %}selected{% endif %}>
+                        Cancelado</option>
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Estado Pago</label>
+                <label class="block text-sm font-medium text-white mb-1">Estado Pago</label>
                 <select name="estado_pago" class="w-full border rounded p-2">
                     <option value="Pendiente" {% if ticket.estado_pago=='Pendiente' %}selected{% endif %}>Pendiente
                     </option>
@@ -74,84 +72,92 @@
         <!-- Servicios/Productos -->
         <div class="mt-6">
             <div class="flex justify-between items-center mb-3">
-                <h3 class="font-medium">Servicios/Productos</h3>
-                <button type="button" id="add-servicio" class="text-sm bg-blue-500 text-white px-3 py-1 rounded">
+                <h3 class="font-medium text-white">Servicios/Productos</h3>
+                <button type="button" id="add-servicio"
+                    class="bg-hyf-accent text-hyf-primary hover:text-white font-bold text-sm flex items-center px-3 py-1 rounded hover:bg-hyf-secondary transition-all duration-200">
                     + Agregar
                 </button>
             </div>
 
-            <table class="w-full border">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="text-left p-2">Tipo</th>
-                        <th class="text-left p-2">Descripción</th>
-                        <th class="text-center p-2">Cantidad</th>
-                        <th class="text-right p-2">Precio</th>
-                        <th class="text-right p-2">Subtotal</th>
-                        <th class="text-center p-2">Acción</th>
-                    </tr>
-                </thead>
-                <tbody id="servicios-tbody">
-                    {% for servicio in ticket.servicios %}
-                    <tr class="border-t" data-id="{{ servicio.id }}">
-                        <td class="p-2">
-                            <select name="tipo_{{ servicio.id }}" class="w-full border rounded p-1">
-                                <option value="Servicio" {% if servicio.tipo=='Servicio' %}selected{% endif %}>Servicio
-                                </option>
-                                <option value="Producto" {% if servicio.tipo=='Producto' %}selected{% endif %}>Producto
-                                </option>
-                            </select>
-                        </td>
-                        <td class="p-2">
-                            <input type="text" name="descripcion_{{ servicio.id }}" value="{{ servicio.descripcion }}"
-                                class="w-full border rounded p-1" required>
-                        </td>
-                        <td class="p-2">
-                            <input type="number" name="cantidad_{{ servicio.id }}" value="{{ servicio.cantidad }}"
-                                min="1" class="w-16 border rounded p-1 text-center" required>
-                        </td>
-                        <td class="p-2">
-                            <input type="number" name="precio_unitario_{{ servicio.id }}"
-                                value="{{ servicio.precio_unitario }}" min="0" step="1"
-                                class="w-24 border rounded p-1 text-right" required>
-                        </td>
-                        <td class="p-2 text-right">${{ "{:,.0f}".format(servicio.subtotal).replace(",", ".") }}</td>
-                        <td class="p-2 text-center">
-                            <button type="button" class="remove-row text-red-500">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr id="no-servicios-row">
-                        <td colspan="6" class="p-4 text-center text-gray-500">No hay servicios registrados</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="overflow-x-auto bg-white rounded p-0.5">
+                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                    <thead class="bg-gray-100 text-gray-700">
+                        <tr>
+                            <th class="text-left p-2">Tipo</th>
+                            <th class="text-left p-2">Descripción</th>
+                            <th class="text-center p-2">Cantidad</th>
+                            <th class="text-right p-2">Precio</th>
+                            <th class="text-right p-2">Subtotal</th>
+                            <th class="text-center p-2">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="servicios-tbody">
+                        {% for servicio in ticket.servicios %}
+                        <tr class="border-t" data-id="{{ servicio.id }}">
+                            <td class="p-2">
+                                <select name="tipo_{{ servicio.id }}" class="w-full border rounded p-1">
+                                    <option value="Servicio" {% if servicio.tipo=='Servicio' %}selected{% endif %}>
+                                        Servicio
+                                    </option>
+                                    <option value="Producto" {% if servicio.tipo=='Producto' %}selected{% endif %}>
+                                        Producto
+                                    </option>
+                                </select>
+                            </td>
+                            <td class="p-2">
+                                <input type="text" name="descripcion_{{ servicio.id }}"
+                                    value="{{ servicio.descripcion }}" class="w-full border rounded p-1" required>
+                            </td>
+                            <td class="p-2">
+                                <input type="number" name="cantidad_{{ servicio.id }}" value="{{ servicio.cantidad }}"
+                                    min="1" class="w-16 border rounded p-1 text-center" required>
+                            </td>
+                            <td class="p-2">
+                                <input type="number" name="precio_unitario_{{ servicio.id }}"
+                                    value="{{ servicio.precio_unitario }}" min="0" step="1"
+                                    class="w-full border rounded p-1 text-right" required>
+                            </td>
+                            <td class="p-2 text-right">${{ "{:,.0f}".format(servicio.subtotal).replace(",", ".") }}</td>
+                            <td class="p-2 text-center">
+                                <button type="button" class="remove-row text-red-500">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr id="no-servicios-row">
+                            <td colspan="6" class="p-4 text-center text-gray-500">No hay servicios registrados</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-
-        <!-- Total y botones -->
-        <div class="flex justify-between items-center mt-6 pt-4 border-t">
-            <div class="space-x-3">
-                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
-                    Guardar Cambios
-                </button>
+    </div>
+    <!-- Total y acciones -->
+    <div class="bg-white px-4 py-3 border-t">
+        <div class="flex justify-between items-center">
+            <div class="flex space-x-2">
                 <a href="{{ url_for('taller.tabla_vehiculos') }}"
-                    class="bg-gray-300 text-gray-800 px-6 py-2 rounded hover:bg-gray-400">
-                    Volver
+                    class="text-hyf-primary hover:text-hyf-accent font-bold text-sm flex items-center px-3 py-1 border border-hyf-primary rounded">
+                    <i class="fas fa-arrow-left mr-1"></i> Volver
                 </a>
+                <button type="submit"
+                    class="bg-hyf-secondary text-white font-bold text-sm flex items-center px-3 py-1 rounded hover:bg-hyf-accent transition">
+                    <i class="fas fa-save mr-1"></i> Guardar
+                </button>
             </div>
-            <div class="bg-gray-100 px-6 py-3 rounded text-right">
-                <p class="text-sm text-gray-600">Total del Ticket</p>
-                <p class="text-xl font-bold">${{ "{:,.0f}".format(total_ticket).replace(",", ".") }}</p>
+            <div class="text-right">
+                <p class="text-xs text-gray-800 uppercase">Total</p>
+                <p class="text-xl font-bold">${{ "{0:,.0f}".format(total_ticket).replace(",", ".") }} CLP</p>
             </div>
         </div>
-    </form>
-</div>
+    </div>
+</form>
+
 
 {% if not (ticket.estado_pago == 'Pagado' and ticket.estado_taller == 'Entregado') %}
-<script src="{{ url_for('static', filename='/js/detalleticket_vehiculo.js') }}"></script>
+<script src="{{ url_for('static', filename='/js/ticket_servicio_editar.js') }}"></script>
 {% endif %}
 
 {% endblock %}
