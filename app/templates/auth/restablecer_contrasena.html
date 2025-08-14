@@ -13,14 +13,23 @@
                 extend: {
                     colors: {
                         hyf: {
-                            primary: '#1e40af',
-                            secondary: '#1e3a8a',
-                            accent: '#f59e0b'
+                            primary: '#0f172a',
+                            secondary: '#1e293b',
+                            accent: '#E2B036',
+                            dark: '#0a0a0a',
+                            light: '#f8fafc',
+                            danger: '#dc2626',
+                            success: '#16a34a',
+                            warning: '#d97706'
                         }
                     },
                     fontFamily: {
                         sans: ['Roboto', 'sans-serif'],
                     },
+                    transitionProperty: {
+                        'width': 'width',
+                        'height': 'height'
+                    }
                 }
             }
         }
@@ -29,12 +38,19 @@
         .animate-fade-in {
             animation: fadeIn 0.5s ease-in-out;
         }
-        
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         .password-toggle {
             position: absolute;
             right: 10px;
@@ -45,89 +61,114 @@
     </style>
 </head>
 
-<body class="h-full">
+<body class="h-full bg-hyf-secondary">
     <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-xl animate-fade-in">
+        <div class="max-w-md w-full space-y-8 bg-hyf-primary p-10 rounded-xl shadow-xl animate-fade-in">
             <div class="text-center">
                 <!-- Logo de HYF consistente -->
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-hyf-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-hyf-accent">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-hyf-primary" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                 </div>
-                <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
+                <h2 class="mt-6 text-3xl font-extrabold text-hyf-light">
                     Restablecer contraseña
                 </h2>
-                <p class="mt-2 text-sm text-gray-600">
+                <p class="mt-2 text-sm text-gray-400">
                     Crea una nueva contraseña segura para tu cuenta
                 </p>
             </div>
 
             <!-- Mensajes flash -->
             {% with mensajes = get_flashed_messages(with_categories=true) %}
-                {% if mensajes %}
-                    <div class="space-y-2">
-                        {% for categoria, mensaje in mensajes %}
-                            <div class="p-4 rounded-md {% if categoria == 'success' %}bg-green-50 text-green-800{% elif categoria == 'danger' %}bg-red-50 text-red-800{% else %}bg-blue-50 text-blue-800{% endif %}">
-                                {{ mensaje }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+            {% if mensajes %}
+            <div class="space-y-2">
+                {% for categoria, mensaje in mensajes %}
+                <div class="relative p-4 rounded-md flex justify-between items-start gap-4 shadow-sm
+                                {% if categoria == 'success' %}bg-green-50 text-green-800 border border-green-200
+                                {% elif categoria == 'danger' %}bg-red-50 text-red-800 border border-red-200
+                                {% else %}bg-blue-50 text-blue-800 border border-blue-200{% endif %}">
+                    <div>{{ mensaje }}</div>
+                    <button onclick="this.parentElement.remove()"
+                        class="text-xl leading-none hover:text-gray-500">&times;</button>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
             {% endwith %}
 
             <form class="mt-8 space-y-6" method="POST">
                 {{ form.hidden_tag() }}
-                
+
                 <div class="rounded-md shadow-sm space-y-4">
                     <div class="relative">
-                        <label for="contrasena" class="block text-sm font-medium text-gray-700">
+                        <label for="contrasena" class="block text-sm font-semibold text-gray-200">
                             Nueva contraseña
                         </label>
                         <div class="mt-1 relative">
-                            {{ form.contrasena(class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-hyf-primary focus:border-hyf-primary sm:text-sm pr-10", placeholder="••••••••", id="password") }}
+                            {{ form.contrasena(class="appearance-none block w-full px-3 py-2 bg-hyf-secondary border
+                            rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:border-hyf-accent
+                            sm:text-sm text-white pr-10", placeholder="••••••••", id="password") }}
                             <span class="password-toggle" onclick="togglePassword('password')">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="h-5 w-5 text-gray-400 hover:text-hyf-accent" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                 </svg>
                             </span>
                             {% if form.contrasena.errors %}
-                                <p class="mt-2 text-sm text-red-600">{{ form.contrasena.errors[0] }}</p>
+                            <p class="mt-2 text-sm text-red-600">{{ form.contrasena.errors[0] }}</p>
                             {% endif %}
                         </div>
                     </div>
 
                     <div class="relative">
-                        <label for="confirmar" class="block text-sm font-medium text-gray-700">
+                        <label for="confirmar" class="block text-sm font-semibold text-gray-200">
                             Confirmar nueva contraseña
                         </label>
                         <div class="mt-1 relative">
-                            {{ form.confirmar(class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-hyf-primary focus:border-hyf-primary sm:text-sm pr-10", placeholder="••••••••", id="confirm-password") }}
+                            {{ form.confirmar(class="appearance-none block w-full px-3 py-2 bg-hyf-secondary border
+                            rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:border-hyf-accent
+                            sm:text-sm text-white pr-10", placeholder="••••••••", id="confirm-password") }}
                             <span class="password-toggle" onclick="togglePassword('confirm-password')">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="h-5 w-5 text-gray-400 hover:text-hyf-accent" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                                 </svg>
                             </span>
                             {% if form.confirmar.errors %}
-                                <p class="mt-2 text-sm text-red-600">{{ form.confirmar.errors[0] }}</p>
+                            <p class="mt-2 text-sm text-red-600">{{ form.confirmar.errors[0] }}</p>
                             {% endif %}
                         </div>
                     </div>
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <a href="{{ url_for('auth.login') }}" class="text-sm font-medium text-hyf-primary hover:text-hyf-secondary">
+                    <a href="{{ url_for('auth.login') }}"
+                        class="text-sm font-medium text-hyf-accent hover:text-yellow-300">
                         ← Volver al inicio
                     </a>
                 </div>
 
                 <div>
-                    <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-hyf-primary hover:bg-hyf-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hyf-primary transition-colors duration-200">
+                    <button type="submit"
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-black hover:text-white bg-hyf-accent hover:bg-hyf-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hyf-primary transition-colors duration-200">
                         <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                            <svg class="h-5 w-5 text-hyf-accent group-hover:text-yellow-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                            <svg class="h-5 w-5 text-black group-hover:text-hyf-accent"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                aria-hidden="true">
+                                <path fill-rule="evenodd"
+                                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                    clip-rule="evenodd" />
                             </svg>
                         </span>
                         Guardar nueva contraseña
@@ -135,8 +176,9 @@
                 </div>
             </form>
 
-            <div class="text-center text-sm text-gray-500">
-                © 2023 HYF Taller de Frenos. Agustin Villarroel Dev
+            <div class="flex justify-between text-center text-sm text-gray-500">
+                <p>© 2025 HYF</p>
+                <p>Desarrollado por Agustin Villarroel</p>
             </div>
         </div>
     </div>

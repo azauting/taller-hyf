@@ -13,14 +13,23 @@
                 extend: {
                     colors: {
                         hyf: {
-                            primary: '#1e40af',
-                            secondary: '#1e3a8a',
-                            accent: '#f59e0b'
+                            primary: '#0f172a',
+                            secondary: '#1e293b',
+                            accent: '#E2B036',
+                            dark: '#0a0a0a',
+                            light: '#f8fafc',
+                            danger: '#dc2626',
+                            success: '#16a34a',
+                            warning: '#d97706'
                         }
                     },
                     fontFamily: {
                         sans: ['Roboto', 'sans-serif'],
                     },
+                    transitionProperty: {
+                        'width': 'width',
+                        'height': 'height'
+                    }
                 }
             }
         }
@@ -44,21 +53,14 @@
     </style>
 </head>
 
-<body class="h-full">
+<body class="h-full bg-hyf-secondary">
     <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-xl animate-fade-in">
+        <div class="max-w-md w-full space-y-8 bg-hyf-primary p-10 rounded-xl shadow-xl animate-fade-in">
             <div class="text-center">
                 <!-- Logo de HYF - Reemplazar con tu logo real -->
-                <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-hyf-primary">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
+                <div class="flex justify-center items-center">
+                    <img class="m-[-100px]" src="{{ url_for('static', filename='logo1.png') }}" alt="H&F FRENOS Logo" style="height: 300px;">
                 </div>
-                <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
-                    HYF Taller de Frenos
-                </h2>
             </div>
 
             <!-- Mensajes flash -->
@@ -85,13 +87,13 @@
                 <input type="hidden" name="remember" value="true">
                 <div class="rounded-md shadow-sm space-y-4">
                     <div>
-                        <label for="correo" class="block text-sm font-medium text-gray-700">
+                        <label for="correo" class="block text-sm font-semibold text-gray-200">
                             Correo electrónico
                         </label>
                         <div class="mt-1 relative">
-                            {{ form.correo(class="appearance-none block w-full px-3 py-2 border border-gray-300
-                            rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-hyf-primary
-                            focus:border-hyf-primary sm:text-sm", placeholder="tu@email.com") }}
+                            {{ form.correo(class="appearance-none block w-full px-3 py-2 bg-hyf-secondary border
+                            rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:border-hyf-accent
+                            sm:text-sm text-white", placeholder="tu@email.com") }}
                             {% if form.correo.errors %}
                             <p class="mt-2 text-sm text-red-600">{{ form.correo.errors[0] }}</p>
                             {% endif %}
@@ -99,19 +101,19 @@
                     </div>
 
                     <div>
-                        <label for="contrasena" class="block text-sm font-medium text-gray-700">
+                        <label for="contrasena" class="block text-sm font-semibold text-gray-200">
                             Contraseña
                         </label>
                         <div class="mt-1 relative">
                             {{ form.contrasena(
-                            class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm
-                            placeholder-gray-400 focus:outline-none focus:ring-hyf-primary focus:border-hyf-primary
-                            sm:text-sm",
+                            class="appearance-none block w-full px-3 py-2 bg-hyf-secondary border
+                            rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:border-hyf-accent
+                            sm:text-sm text-white",
                             id="password",
                             placeholder="••••••••"
                             ) }}
                             <button type="button" onclick="togglePassword('password')"
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none">
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white focus:outline-none">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -130,7 +132,7 @@
 
                         <div class="text-sm">
                             <a href="{{ url_for('auth.recuperar_contrasena') }}"
-                                class="font-medium text-hyf-primary hover:text-hyf-secondary">
+                                class="font-medium text-gray-400 hover:text-hyf-accent">
                                 ¿Olvidaste tu contraseña?
                             </a>
                         </div>
@@ -138,9 +140,9 @@
 
                     <div>
                         <button type="submit"
-                            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-hyf-primary hover:bg-hyf-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hyf-primary transition-colors duration-200">
+                            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-black hover:text-white bg-hyf-accent hover:bg-hyf-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-hyf-primary transition-colors duration-200">
                             <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                                <svg class="h-5 w-5 text-hyf-accent group-hover:text-yellow-300"
+                                <svg class="h-5 w-5 text-black group-hover:text-hyf-accent"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                                     aria-hidden="true">
                                     <path fill-rule="evenodd"
@@ -153,8 +155,9 @@
                     </div>
             </form>
 
-            <div class="text-center text-sm text-gray-500">
-                © 2025 HYF Taller de Frenos. Agustin Villarroel Dev
+            <div class="flex justify-between text-center text-sm text-gray-500">
+               <p>© 2025 HYF</p>
+               <p>Desarrollado por Agustin Villarroel</p>
             </div>
         </div>
     </div>
