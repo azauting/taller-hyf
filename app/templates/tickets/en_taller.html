@@ -33,7 +33,7 @@
             {% set patente_formateada = ticket.vehiculo.patente[:2] + '-' + ticket.vehiculo.patente[2:4] + '-' +
             ticket.vehiculo.patente[4:] %}
             <div
-                class="bg-hyf-primary rounded-lg border border-gray-100 shadow-sm hover:shadow-lg hover:scale-105 duration-100 ease-in">
+                class="bg-hyf-primary rounded-lg shadow-md shadow-hyf-primary hover:scale-105 duration-100 ease-in">
                 <!-- Encabezado -->
                 <div class="flex justify-between items-center p-4 border-b border-gray-100">
                     <div class="flex items-center gap-3">
@@ -97,7 +97,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {% for ticket in tickets_repuesto %}
             <div
-                class="bg-hyf-primary rounded-lg border border-gray-100 shadow-sm hover:shadow-lg hover:scale-[1.01] transition-all duration-200">
+                class="bg-hyf-primary rounded-lg shadow-md shadow-hyf-primary hover:scale-105 duration-100 ease-in">
                 <!-- Encabezado -->
                 <div class="flex justify-between items-center p-4 border-b border-gray-100">
                     <div class="flex items-center gap-3">

@@ -112,12 +112,13 @@
         <div
             class="flex bg-hyf-primary text-white w-64 flex-col border-r border-hyf-secondary max-h-screen overflow-y-auto scrollbar-thin">
             <!-- Logo -->
-            <div class=" border-b border-hyf-secondary flex justify-center items-center">
-                <img class="" src="{{ url_for('static', filename='logo1.png') }}" alt="H&F FRENOS Logo" style="height: 120px;">
+            <div class=" flex justify-center items-center pt-2">
+                <img class="m-[-50px]" src="{{ url_for('static', filename='logo1.png') }}" alt="H&F FRENOS Logo"
+                    style="height: 200px;">
             </div>
 
             <!-- Navegación -->
-            <nav class="mt-6 flex-1 px-3 flex flex-col">
+            <nav class="pt-2 flex-1 px-3 flex flex-col">
                 <!-- Boton para el ticket -->
                 <button id="openModal"
                     class="flex items-center justify-center p-3 mb-6 rounded-lg bg-hyf-accent text-hyf-dark font-semibold hover:bg-yellow-500 transition-colors w-full group">
@@ -126,8 +127,9 @@
                 </button>
 
                 <div>
-                    <p class="uppercase text-xs text-gray-400 font-semibold mt-6 mb-2 px-2">Menu</p>
-
+                    <div class="border-b border-hyf-secondary px-4 py-2 mb-4">
+                        <p class="uppercase text-xs text-gray-200 font-semibold ">Menu</p>
+                    </div>
                     <!-- Items de menú con tooltips para versión colapsada -->
                     <div class="space-y-1 text-lg font-medium">
                         <a href="{{ url_for('taller.tickets_en_taller') }}"
