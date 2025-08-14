@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, jsonify
 from datetime import datetime
 from app.models import Inventario, TicketServicio, TicketRepuesto
 from app import db
@@ -75,3 +75,87 @@ def ver_estadisticas():
         total_filtrado=total_filtrado,
         current_year=current_year
     )
+
+@estadisticas_bp.route('/panel/estadisticas/datos-grafico')
+def datos_grafico():
+    # Obtener datos para el gráfico de los últimos 12 meses
+    end_date = datetime.now()
+    start_date = datetime(end_date.year - 1, end_date.month, end_date.day)
+    
+    # Consulta para servicios
+    servicios_data = db.session.query(
+        extract('month', TicketServicio.fecha_creacion).label('mes'),
+        extract('year', TicketServicio.fecha_creacion).label('ano'),
+        func.coalesce(func.sum(TicketServicio.total), 0).label('total')
+    ).filter(
+        TicketServicio.estado_taller == "Entregado",
+        TicketServicio.estado_pago == "Pagado",
+        TicketServicio.fecha_creacion >= start_date
+    ).group_by(
+        extract('year', TicketServicio.fecha_creacion),
+        extract('month', TicketServicio.fecha_creacion)
+    ).all()
+    
+    # Consulta para repuestos
+    repuestos_data = db.session.query(
+        extract('month', TicketRepuesto.fecha_creacion).label('mes'),
+        extract('year', TicketRepuesto.fecha_creacion).label('ano'),
+        func.coalesce(func.sum(TicketRepuesto.total), 0).label('total')
+    ).filter(
+        TicketRepuesto.estado_taller == "Entregado",
+        TicketRepuesto.estado_pago == "Pagado",
+        TicketRepuesto.fecha_creacion >= start_date
+    ).group_by(
+        extract('year', TicketRepuesto.fecha_creacion),
+        extract('month', TicketRepuesto.fecha_creacion)
+    ).all()
+    
+    # Combinar datos
+    meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 
+             'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+    
+    # Crear estructura para 12 meses
+    datos_grafico = {
+        'labels': [],
+        'servicios': [0] * 12,
+        'repuestos': [0] * 12,
+        'total': [0] * 12
+    }
+    
+    current_month = end_date.month
+    for i in range(12):
+        month_index = (current_month - 1 - i) % 12
+        year = end_date.year if (current_month - i) > 0 else end_date.year - 1
+        datos_grafico['labels'].insert(0, f"{meses[month_index]} {year}")
+        
+    # Llenar datos de servicios
+    for dato in servicios_data:
+        month_index = dato.mes - 1
+        year_diff = end_date.year - dato.ano
+        if year_diff == 0:
+            pos = (current_month - 1) - (current_month - dato.mes)
+        elif year_diff == 1:
+            pos = (current_month - 1) + (12 - (current_month - dato.mes))
+        else:
+            continue
+            
+        if 0 <= pos < 12:
+            datos_grafico['servicios'][pos] = float(dato.total)
+            datos_grafico['total'][pos] += float(dato.total)
+    
+    # Llenar datos de repuestos
+    for dato in repuestos_data:
+        month_index = dato.mes - 1
+        year_diff = end_date.year - dato.ano
+        if year_diff == 0:
+            pos = (current_month - 1) - (current_month - dato.mes)
+        elif year_diff == 1:
+            pos = (current_month - 1) + (12 - (current_month - dato.mes))
+        else:
+            continue
+            
+        if 0 <= pos < 12:
+            datos_grafico['repuestos'][pos] = float(dato.total)
+            datos_grafico['total'][pos] += float(dato.total)
+    
+    return jsonify(datos_grafico)

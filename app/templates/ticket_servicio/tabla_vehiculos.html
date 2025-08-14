@@ -166,10 +166,18 @@
                 <tr class="hover:bg-gray-800 transition-colors duration-150">
                     <td class="px-4 py-3 whitespace-nowrap">
                         <div class="flex items-center">
-                            <div
-                                class="flex-shrink-0 h-8 w-8 rounded-md flex items-center justify-center mr-2 bg-{{ 'yellow' if ticket.estado_taller == 'En taller' else 'blue' if ticket.estado_taller == 'Terminado' else 'green' if ticket.estado_taller == 'Entregado' else 'red' if ticket.estado_taller == 'Cancelado' else 'gray' }}-100">
-                                <i
-                                    class="fas fa-{{ 'tools' if ticket.estado_taller == 'En taller' else 'check-circle' if ticket.estado_taller == 'Terminado' else 'check-double' if ticket.estado_taller == 'Entregado' else 'ban' }} text-{{ 'yellow' if ticket.estado_taller == 'En taller' else 'blue' if ticket.estado_taller == 'Terminado' else 'green' if ticket.estado_taller == 'Entregado' else 'red' if ticket.estado_taller == 'Cancelado' else 'gray' }}-600 text-sm"></i>
+                            <div class="flex-shrink-0 h-8 w-8 rounded-md flex items-center justify-center mr-2 
+                                {% if ticket.estado_taller == 'En taller' %}bg-yellow-100/20 text-yellow-400
+                                {% elif ticket.estado_taller == 'Terminado' %}bg-blue-100/20 text-blue-400
+                                {% elif ticket.estado_taller == 'Entregado' %}bg-green-100/20 text-green-400
+                                {% elif ticket.estado_taller == 'Cancelado' %}bg-red-100/20 text-red-400
+                                {% else %}bg-gray-100/20 text-gray-400{% endif %}">
+                                <i class="fas 
+                                    {% if ticket.estado_taller == 'En taller' %}fa-tools
+                                    {% elif ticket.estado_taller == 'Terminado' %}fa-check-circle
+                                    {% elif ticket.estado_taller == 'Entregado' %}fa-check-double
+                                    {% elif ticket.estado_taller == 'Cancelado' %}fa-times-circle
+                                    {% else %}fa-ban{% endif %} text-sm"></i>
                             </div>
                             <div>
                                 <div class="text-sm font-bold text-white truncate max-w-xs">{{

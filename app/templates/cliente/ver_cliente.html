@@ -1,69 +1,69 @@
 {% extends 'menu/sidebar.html' %}
 
-{% block title %}Cliente {{ cliente.nombre }} - HYF{% endblock %}
-{% block header %}Panel del Cliente{% endblock %}
+{% block title %}Cliente {{ cliente.nombre }} | HYF{% endblock %}
+{% block header %}Cliente{% endblock %}
 
 {% block content %}
 
 <!-- Resumen financiero mejorado -->
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-    <div class="p-4 border-b border-gray-200">
-        <h2 class="text-lg font-semibold text-gray-800">Resumen de {{ cliente.nombre }} {{ cliente.apellido }} </h2>
+<div class="bg-hyf-primary rounded-xl shadow-md shadow-hyf-primary border border-gray-700 mb-6">
+    <div class="p-4 border-b border-gray-700">
+        <h2 class="text-lg font-bold text-white">Historial de {{ cliente.nombre }} {{ cliente.apellido }}</h2>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
         <!-- Deuda total -->
-        <div class="bg-gradient-to-br from-red-50 to-red-100 p-4 rounded-lg border border-red-200 shadow-sm">
+        <div class="bg-gradient-to-br from-hyf-secondary to-hyf-primary p-4 rounded-lg border border-gray-700 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between">
-                <h3 class="text-sm font-medium text-red-800">Deuda Total</h3>
+                <h3 class="text-sm font-semibold text-gray-300">Deuda Total</h3>
                 <i class="fas fa-exclamation-circle text-red-400"></i>
             </div>
-            <p class="text-2xl font-bold text-red-900 mt-1">
+            <p class="text-2xl font-bold text-white mt-1">
                 ${{ "{:,.0f}".format(deuda_servicios + deuda_repuestos).replace(",", ".") }} CLP
             </p>
-            <div class="mt-2 flex justify-between text-xs">
-                <span class="text-red-600">Servicios: ${{ "{:,.0f}".format(deuda_servicios).replace(",", ".") }}</span>
-                <span class="text-red-600">Repuestos: ${{ "{:,.0f}".format(deuda_repuestos).replace(",", ".") }}</span>
+            <div class="mt-2 flex justify-between text-xs text-gray-400">
+                <span>Servicios: ${{ "{:,.0f}".format(deuda_servicios).replace(",", ".") }}</span>
+                <span>Repuestos: ${{ "{:,.0f}".format(deuda_repuestos).replace(",", ".") }}</span>
             </div>
         </div>
 
         <!-- Deuda en servicios -->
-        <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200 shadow-sm">
+        <div class="bg-gradient-to-br from-hyf-secondary to-hyf-primary p-4 rounded-lg border border-gray-700 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between">
-                <h3 class="text-sm font-medium text-blue-800">Deuda en Servicios</h3>
+                <h3 class="text-sm font-semibold text-gray-300">Deuda en Servicios</h3>
                 <i class="fas fa-tools text-blue-400"></i>
             </div>
-            <p class="text-2xl font-bold text-blue-900 mt-1">
+            <p class="text-2xl font-bold text-white mt-1">
                 ${{ "{:,.0f}".format(deuda_servicios).replace(",", ".") }} CLP
             </p>
-            <p class="text-xs text-blue-600 mt-2">
-                <span class="font-semibold">{{ tickets_servicio_pendientes.total }}</span> tickets pendientes
+            <p class="text-xs text-gray-400 mt-2">
+                <span class="font-semibold text-white">{{ tickets_servicio_pendientes.total }}</span> tickets pendientes
             </p>
         </div>
 
         <!-- Deuda en repuestos -->
-        <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200 shadow-sm">
+        <div class="bg-gradient-to-br from-hyf-secondary to-hyf-primary p-4 rounded-lg border border-gray-700 shadow-sm hover:shadow-md transition">
             <div class="flex items-center justify-between">
-                <h3 class="text-sm font-medium text-purple-800">Deuda en Repuestos</h3>
+                <h3 class="text-sm font-semibold text-gray-300">Deuda en Repuestos</h3>
                 <i class="fas fa-cog text-purple-400"></i>
             </div>
-            <p class="text-2xl font-bold text-purple-900 mt-1">
+            <p class="text-2xl font-bold text-white mt-1">
                 ${{ "{:,.0f}".format(deuda_repuestos).replace(",", ".") }} CLP
             </p>
-            <p class="text-xs text-purple-600 mt-2">
-                <span class="font-semibold">{{ tickets_repuesto_pendientes.total }}</span> tickets pendientes
+            <p class="text-xs text-gray-400 mt-2">
+                <span class="font-semibold text-white">{{ tickets_repuesto_pendientes.total }}</span> tickets pendientes
             </p>
         </div>
     </div>
 
     <!-- Pestañas principales con mejor diseño -->
-    <div class="border-b border-gray-200">
+    <div class="border-b border-gray-700">
         <nav class="flex">
             <button id="tab-servicios"
-                class="tab-button active py-3 px-6 text-center border-b-2 font-medium text-sm border-hyf-primary text-hyf-primary transition-colors duration-200">
+                class="tab-button active py-3 px-6 text-center border-b-2 font-semibold text-sm border-hyf-accent text-hyf-accent transition-colors duration-200">
                 <i class="fas fa-tools mr-2"></i>Servicios
             </button>
             <button id="tab-repuestos"
-                class="tab-button py-3 px-6 text-center border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 transition-colors duration-200">
+                class="tab-button py-3 px-6 text-center border-b-2 font-semibold text-sm border-transparent text-gray-400 hover:text-white hover:border-gray-500 transition-colors duration-200">
                 <i class="fas fa-cog mr-2"></i>Repuestos
             </button>
         </nav>
@@ -72,38 +72,35 @@
     <!-- Contenido de Servicios -->
     <div id="contenido-servicios" class="tab-content">
         <!-- Filtros mejorados -->
-        <div
-            class="p-4 border-b border-gray-200 bg-gray-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="p-4 border-b border-gray-700 bg-hyf-secondary flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-center space-x-4">
                 <div class="flex items-center space-x-2">
-                    <label for="filter-servicios" class="text-sm font-medium text-gray-700 whitespace-nowrap">
-                        <i class="fas fa-filter mr-1 text-gray-500"></i>Filtrar:
+                    <label for="filter-servicios" class="text-sm font-semibold text-gray-300 whitespace-nowrap">
+                        <i class="fas fa-filter mr-1 text-gray-400"></i>Filtrar:
                     </label>
                     <select id="filter-servicios"
-                        class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-2 focus:ring-hyf-primary focus:border-hyf-primary sm:text-sm rounded-md shadow-sm">
+                        class="block w-full pl-3 pr-10 py-2 text-base border-gray-700 focus:outline-none focus:ring-2 focus:ring-hyf-accent focus:border-hyf-accent sm:text-sm rounded-md bg-hyf-primary text-white">
                         <option value="all">Todos los tickets</option>
                         <option value="Pagado">Pagados</option>
                         <option value="Pendiente">Pendientes</option>
                     </select>
                 </div>
-
-                <div class="hidden sm:block border-l border-gray-300 h-6"></div>
+                
+                <div class="hidden sm:block border-l border-gray-600 h-6"></div>
 
                 <div class="flex space-x-2">
-                    <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100/20 text-green-400">
                         <i class="fas fa-check-circle mr-1"></i>
                         {{ tickets_servicio_pagados.total }} Pagados
                     </span>
-                    <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100/20 text-yellow-400">
                         <i class="fas fa-clock mr-1"></i>
                         {{ tickets_servicio_pendientes.total }} Pendientes
                     </span>
                 </div>
             </div>
 
-            <div class="text-sm text-gray-500 bg-white px-3 py-1 rounded-md border border-gray-200 shadow-sm">
+            <div class="text-sm text-gray-400 bg-hyf-primary px-3 py-1 rounded-md border border-gray-700 shadow-sm">
                 <i class="fas fa-file-alt mr-1"></i>
                 Total: {{ tickets_servicio_pagados.total + tickets_servicio_pendientes.total }} tickets
             </div>
@@ -111,31 +108,25 @@
 
         <!-- Tabla de servicios mejorada -->
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-700">
+                <thead class="bg-hyf-primary">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Estado</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Vehículo</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Acciones</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Estado</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Vehículo</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Total</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Fecha</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Acciones</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200" id="servicios-table-body">
+                <tbody class="bg-hyf-primary divide-y divide-gray-700" id="servicios-table-body">
                     {% for ticket in tickets_servicio_pagados.items + tickets_servicio_pendientes.items %}
-                    <tr class="hover:bg-gray-50 transition-colors servicio-row" data-status="{{ ticket.estado_pago }}">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">#{{ ticket.id }}</td>
+                    <tr class="hover:bg-gray-800 transition-colors servicio-row" data-status="{{ ticket.estado_pago }}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-400">#{{ ticket.id }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex justify-center items-center px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                {% if ticket.estado_pago == 'Pagado' %}bg-green-100 text-green-800
-                                {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                {% if ticket.estado_pago == 'Pagado' %}bg-green-100/20 text-green-400
+                                {% else %}bg-yellow-100/20 text-yellow-400{% endif %}">
                                 {% if ticket.estado_pago == 'Pagado' %}
                                 <i class="fas fa-check-circle mr-1"></i>
                                 {% else %}
@@ -145,24 +136,22 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">{{ ticket.vehiculo.patente }} </div>
-                            <div class="text-sm text-gray-500 flex items-center mt-1">
-                                <i class="fas fa-car mr-1 text-gray-400"></i>{{ ticket.vehiculo.marca }} {{
-                                ticket.vehiculo.modelo }}
+                            <div class="text-sm font-bold text-white">{{ ticket.vehiculo.patente }}</div>
+                            <div class="text-sm text-gray-400 flex items-center mt-1">
+                                <i class="fas fa-car mr-1"></i>{{ ticket.vehiculo.marca }} {{ ticket.vehiculo.modelo }}
                             </div>
                         </td>
-                        <td
-                            class="px-6 py-4 whitespace-nowrap text-sm font-medium 
-                            {% if ticket.estado_pago == 'Pendiente' %}text-red-600 font-semibold{% else %}text-gray-900{% endif %}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold 
+                            {% if ticket.estado_pago == 'Pendiente' %}text-red-400{% else %}text-white{% endif %}">
                             ${{ "{:,.0f}".format(ticket.total).replace(",", ".") }} CLP
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <i class="far fa-calendar-alt mr-1 text-gray-400"></i>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                            <i class="far fa-calendar-alt mr-1"></i>
                             {{ ticket.fecha_creacion.strftime('%d/%m/%Y') }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold">
                             <a href="{{ url_for('ticket_servicio.ticket_servicio_ver', ticket_id=ticket.id) }}"
-                                class="text-blue-600 hover:text-blue-900 inline-flex items-center">
+                                class="text-hyf-accent hover:text-yellow-300 inline-flex items-center">
                                 <i class="fas fa-eye mr-1"></i> Ver
                             </a>
                         </td>
@@ -174,20 +163,20 @@
 
         <!-- Paginación mejorada -->
         {% if tickets_servicio_pagados.pages > 1 or tickets_servicio_pendientes.pages > 1 %}
-        <div class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+        <div class="px-4 py-3 bg-hyf-secondary border-t border-gray-700 flex items-center justify-between">
             <div class="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div class="mb-2 sm:mb-0">
-                    <p class="text-sm text-gray-700">
-                        Mostrando <span class="font-medium">{{ tickets_servicio_pagados.items|length +
+                    <p class="text-sm text-gray-400">
+                        Mostrando <span class="font-bold text-white">{{ tickets_servicio_pagados.items|length +
                             tickets_servicio_pendientes.items|length }}</span> de
-                        <span class="font-medium">{{ tickets_servicio_pagados.total + tickets_servicio_pendientes.total
+                        <span class="font-bold text-white">{{ tickets_servicio_pagados.total + tickets_servicio_pendientes.total
                             }}</span> tickets
                     </p>
                 </div>
                 <div class="flex space-x-1">
                     {% if tickets_servicio_pagados.has_prev %}
                     <a href="{{ url_for('cliente.ver_cliente', id=cliente.id, page_servicios_pagados=tickets_servicio_pagados.prev_num, page_servicios_pendientes=tickets_servicio_pendientes.page) }}"
-                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-700 bg-hyf-primary text-sm font-bold text-gray-400 hover:bg-gray-800">
                         <span class="sr-only">Anterior</span>
                         <i class="fas fa-chevron-left"></i>
                     </a>
@@ -198,18 +187,18 @@
                     {% if page_num %}
                     {% if tickets_servicio_pagados.page == page_num %}
                     <a href="{{ url_for('cliente.ver_cliente', id=cliente.id, page_servicios_pagados=page_num, page_servicios_pendientes=tickets_servicio_pendientes.page) }}"
-                        class="relative inline-flex items-center px-4 py-2 border border-hyf-primary bg-hyf-primary text-white text-sm font-medium">
+                        class="relative inline-flex items-center px-4 py-2 border border-hyf-accent bg-hyf-accent text-black text-sm font-bold">
                         {{ page_num }}
                     </a>
                     {% else %}
                     <a href="{{ url_for('cliente.ver_cliente', id=cliente.id, page_servicios_pagados=page_num, page_servicios_pendientes=tickets_servicio_pendientes.page) }}"
-                        class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        class="relative inline-flex items-center px-4 py-2 border border-gray-700 bg-hyf-primary text-sm font-bold text-gray-400 hover:bg-gray-800">
                         {{ page_num }}
                     </a>
                     {% endif %}
                     {% else %}
                     <span
-                        class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                        class="relative inline-flex items-center px-4 py-2 border border-gray-700 bg-hyf-primary text-sm font-bold text-gray-600">
                         ...
                     </span>
                     {% endif %}
@@ -217,7 +206,7 @@
 
                     {% if tickets_servicio_pagados.has_next %}
                     <a href="{{ url_for('cliente.ver_cliente', id=cliente.id, page_servicios_pagados=tickets_servicio_pagados.next_num, page_servicios_pendientes=tickets_servicio_pendientes.page) }}"
-                        class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-700 bg-hyf-primary text-sm font-bold text-gray-400 hover:bg-gray-800">
                         <span class="sr-only">Siguiente</span>
                         <i class="fas fa-chevron-right"></i>
                     </a>
@@ -231,38 +220,35 @@
     <!-- Contenido de Repuestos -->
     <div id="contenido-repuestos" class="tab-content hidden">
         <!-- Filtros mejorados -->
-        <div
-            class="p-4 border-b border-gray-200 bg-gray-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="p-4 border-b border-gray-700 bg-hyf-secondary flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div class="flex items-center space-x-4">
                 <div class="flex items-center space-x-2">
-                    <label for="filter-repuestos" class="text-sm font-medium text-gray-700 whitespace-nowrap">
-                        <i class="fas fa-filter mr-1 text-gray-500"></i>Filtrar:
+                    <label for="filter-repuestos" class="text-sm font-semibold text-gray-300 whitespace-nowrap">
+                        <i class="fas fa-filter mr-1 text-gray-400"></i>Filtrar:
                     </label>
                     <select id="filter-repuestos"
-                        class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-2 focus:ring-hyf-primary focus:border-hyf-primary sm:text-sm rounded-md shadow-sm">
+                        class="block w-full pl-3 pr-10 py-2 text-base border-gray-700 focus:outline-none focus:ring-2 focus:ring-hyf-accent focus:border-hyf-accent sm:text-sm rounded-md bg-hyf-primary text-white">
                         <option value="all">Todos los tickets</option>
                         <option value="Pagado">Pagados</option>
                         <option value="Pendiente">Pendientes</option>
                     </select>
                 </div>
 
-                <div class="hidden sm:block border-l border-gray-300 h-6"></div>
+                <div class="hidden sm:block border-l border-gray-600 h-6"></div>
 
                 <div class="flex space-x-2">
-                    <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100/20 text-green-400">
                         <i class="fas fa-check-circle mr-1"></i>
                         {{ tickets_repuesto_pagados.total }} Pagados
                     </span>
-                    <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100/20 text-yellow-400">
                         <i class="fas fa-clock mr-1"></i>
                         {{ tickets_repuesto_pendientes.total }} Pendientes
                     </span>
                 </div>
             </div>
 
-            <div class="text-sm text-gray-500 bg-white px-3 py-1 rounded-md border border-gray-200 shadow-sm">
+            <div class="text-sm text-gray-400 bg-hyf-primary px-3 py-1 rounded-md border border-gray-700 shadow-sm">
                 <i class="fas fa-file-alt mr-1"></i>
                 Total: {{ tickets_repuesto_pagados.total + tickets_repuesto_pendientes.total }} tickets
             </div>
@@ -270,31 +256,25 @@
 
         <!-- Tabla de repuestos mejorada -->
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
+            <table class="min-w-full divide-y divide-gray-700">
+                <thead class="bg-hyf-primary">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Estado</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo
-                            de repuesto</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Acciones</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Estado</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Tipo de repuesto</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Total</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Fecha</th>
+                        <th class="px-6 py-3 text-left text-xs font-bold text-gray-300 uppercase tracking-wider">Acciones</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200" id="repuestos-table-body">
+                <tbody class="bg-hyf-primary divide-y divide-gray-700" id="repuestos-table-body">
                     {% for ticket in tickets_repuesto_pagados.items + tickets_repuesto_pendientes.items %}
-                    <tr class="hover:bg-gray-50 transition-colors repuesto-row" data-status="{{ ticket.estado_pago }}">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-500">#{{ ticket.id }}</td>
+                    <tr class="hover:bg-gray-800 transition-colors repuesto-row" data-status="{{ ticket.estado_pago }}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-400">#{{ ticket.id }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex justify-center items-center px-2.5 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                {% if ticket.estado_pago == 'Pagado' %}bg-green-100 text-green-800
-                                {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                {% if ticket.estado_pago == 'Pagado' %}bg-green-100/20 text-green-400
+                                {% else %}bg-yellow-100/20 text-yellow-400{% endif %}">
                                 {% if ticket.estado_pago == 'Pagado' %}
                                 <i class="fas fa-check-circle mr-1"></i>
                                 {% else %}
@@ -304,20 +284,19 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm font-medium text-gray-900">{{ ticket.tipo_repuesto }}</div>
+                            <div class="text-sm font-bold text-white">{{ ticket.tipo_repuesto }}</div>
                         </td>
-                        <td
-                            class="px-6 py-4 whitespace-nowrap text-sm font-medium 
-                            {% if ticket.estado_pago == 'Pendiente' %}text-red-600 font-semibold{% else %}text-gray-900{% endif %}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold 
+                            {% if ticket.estado_pago == 'Pendiente' %}text-red-400{% else %}text-white{% endif %}">
                             ${{ "{:,.0f}".format(ticket.total).replace(",", ".") }} CLP
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <i class="far fa-calendar-alt mr-1 text-gray-400"></i>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                            <i class="far fa-calendar-alt mr-1"></i>
                             {{ ticket.fecha_creacion.strftime('%d/%m/%Y') }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-bold">
                             <a href="{{ url_for('ticket_repuesto.ticket_repuesto_ver', ticket_id=ticket.id) }}"
-                                class="text-blue-600 hover:text-blue-900 inline-flex items-center">
+                                class="text-hyf-accent hover:text-yellow-300 inline-flex items-center">
                                 <i class="fas fa-eye mr-1"></i> Ver
                             </a>
                         </td>
@@ -329,20 +308,20 @@
 
         <!-- Paginación mejorada -->
         {% if tickets_repuesto_pagados.pages > 1 or tickets_repuesto_pendientes.pages > 1 %}
-        <div class="px-4 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+        <div class="px-4 py-3 bg-hyf-secondary border-t border-gray-700 flex items-center justify-between">
             <div class="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between">
                 <div class="mb-2 sm:mb-0">
-                    <p class="text-sm text-gray-700">
-                        Mostrando <span class="font-medium">{{ tickets_repuesto_pagados.items|length +
+                    <p class="text-sm text-gray-400">
+                        Mostrando <span class="font-bold text-white">{{ tickets_repuesto_pagados.items|length +
                             tickets_repuesto_pendientes.items|length }}</span> de
-                        <span class="font-medium">{{ tickets_repuesto_pagados.total + tickets_repuesto_pendientes.total
+                        <span class="font-bold text-white">{{ tickets_repuesto_pagados.total + tickets_repuesto_pendientes.total
                             }}</span> tickets
                     </p>
                 </div>
                 <div class="flex space-x-1">
                     {% if tickets_repuesto_pagados.has_prev %}
                     <a href="{{ url_for('cliente.ver_cliente', id=cliente.id, page_repuestos_pagados=tickets_repuesto_pagados.prev_num, page_repuestos_pendientes=tickets_repuesto_pendientes.page) }}"
-                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-700 bg-hyf-primary text-sm font-bold text-gray-400 hover:bg-gray-800">
                         <span class="sr-only">Anterior</span>
                         <i class="fas fa-chevron-left"></i>
                     </a>
@@ -353,18 +332,18 @@
                     {% if page_num %}
                     {% if tickets_repuesto_pagados.page == page_num %}
                     <a href="{{ url_for('cliente.ver_cliente', id=cliente.id, page_repuestos_pagados=page_num, page_repuestos_pendientes=tickets_repuesto_pendientes.page) }}"
-                        class="relative inline-flex items-center px-4 py-2 border border-hyf-primary bg-hyf-primary text-white text-sm font-medium">
+                        class="relative inline-flex items-center px-4 py-2 border border-hyf-accent bg-hyf-accent text-black text-sm font-bold">
                         {{ page_num }}
                     </a>
                     {% else %}
                     <a href="{{ url_for('cliente.ver_cliente', id=cliente.id, page_repuestos_pagados=page_num, page_repuestos_pendientes=tickets_repuesto_pendientes.page) }}"
-                        class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        class="relative inline-flex items-center px-4 py-2 border border-gray-700 bg-hyf-primary text-sm font-bold text-gray-400 hover:bg-gray-800">
                         {{ page_num }}
                     </a>
                     {% endif %}
                     {% else %}
                     <span
-                        class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                        class="relative inline-flex items-center px-4 py-2 border border-gray-700 bg-hyf-primary text-sm font-bold text-gray-600">
                         ...
                     </span>
                     {% endif %}
@@ -372,7 +351,7 @@
 
                     {% if tickets_repuesto_pagados.has_next %}
                     <a href="{{ url_for('cliente.ver_cliente', id=cliente.id, page_repuestos_pagados=tickets_repuesto_pagados.next_num, page_repuestos_pendientes=tickets_repuesto_pendientes.page) }}"
-                        class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-700 bg-hyf-primary text-sm font-bold text-gray-400 hover:bg-gray-800">
                         <span class="sr-only">Siguiente</span>
                         <i class="fas fa-chevron-right"></i>
                     </a>
@@ -403,16 +382,16 @@
 
                     // Desactivar todas las pestañas
                     document.querySelectorAll('.tab-button').forEach(t => {
-                        t.classList.remove('active', 'border-hyf-primary', 'text-hyf-primary');
-                        t.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                        t.classList.remove('active', 'border-hyf-accent', 'text-hyf-accent');
+                        t.classList.add('border-transparent', 'text-gray-400', 'hover:text-white', 'hover:border-gray-500');
                     });
 
                     // Mostrar el contenido seleccionado
                     content.classList.remove('hidden');
 
                     // Activar la pestaña clickeada
-                    tab.classList.add('active', 'border-hyf-primary', 'text-hyf-primary');
-                    tab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300');
+                    tab.classList.add('active', 'border-hyf-accent', 'text-hyf-accent');
+                    tab.classList.remove('border-transparent', 'text-gray-400', 'hover:text-white', 'hover:border-gray-500');
 
                     // Resetear los filtros al cambiar de pestaña
                     if (contentId === 'contenido-servicios') {
@@ -453,6 +432,7 @@
                 filterTable('repuestos-table-body', this.value);
             });
         }
+
     });
 </script>
 
